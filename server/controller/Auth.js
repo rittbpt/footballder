@@ -33,6 +33,9 @@ exports.Login = async (req, res) => {
         const { email, password, rememberme } = req.body
         const sql = `SELECT * FROM USER WHERE email = '${email}'`
         const userinfo = await api(sql);
+        if (!userinfo.length) {
+            return res.send({ status: 400, data: "Not found user" });
+        }
         const checkPassword = await AuthHelper.comparePassword(password, userinfo[0].password)
         if (!checkPassword) {
             return res.send({ status: 400, data: "wrong password" });
