@@ -1,0 +1,24 @@
+const api = require("../connect/connectMysql")
+
+const method = {
+    getRecent: async function (userId) {
+        try {
+            const sql = `
+                SELECT rq.* , mt.* 
+                    FROM Request AS rq 
+                    JOIN MatchTable AS mt ON mt.id = rq.MacthId 
+                    JOIN Location AS lo ON lo.id = mt.locationId 
+                    JOIN USER AS user ON user.id = rq.userId 
+                WHERE rq.userId = ${userId}
+          `;
+
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+}
+
+module.exports = method;

@@ -11,7 +11,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 
 fs.readdirSync("routes").forEach(function (file) {
     if (file[0] == ".") return;
-    var routeName = file.substr(0, file.indexOf("."));
+    const routeName = file.split('.')[0];
     require("./routes/" + routeName)(app);
 });
 

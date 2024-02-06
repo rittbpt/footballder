@@ -1,65 +1,41 @@
-const api = require("../connect/connectMysql")
-var jwt = require("jsonwebtoken");
 const AuthHelper = require("../helper/Auth")
-const dateHelper = require("../helper/date")
+const Service = require("../service/auth")
 
 exports.Register = async (req, res) => {
     try {
         const { firstName, lastName, password, email, phoneNumber, birthDay } = req.body;
-
-        const sqlcheckemail = `SELECT email FROM USER WHERE email = '${email}'`
-        const checkemail = await api(sqlcheckemail)
-        if (checkemail.length) {
+        const user = await Service.findById(email, 'email')
+        if (user.length) {
             return res.send({ status: 410, data: "have this email" });
         }
-
-        const encryptPassword = await AuthHelper.encryptPassword(password);
-        const dateNow = await dateHelper.DateNow();
-        const birthdayDate = await dateHelper.convertdatestringtoDate(birthDay);
-
-        const sql = `INSERT INTO USER (email, password, create_time, firstName, lastName, phoneNumber, birthDay, active)
-        VALUES ('${email}', '${encryptPassword}', '${dateNow}', '${firstName}', '${lastName}', '${phoneNumber}', '${birthdayDate}', 1)`;
-
-        await api(sql);
+        await Service.insertUser(email, password, firstName, lastName, phoneNumber, birthDay);
         return res.send({ status: 200 });
     } catch (e) {
         console.log(e.message)
-        res.send({ status: 400 });
+        return res.send({ status: 400 });
     }
 }
 
 exports.Login = async (req, res) => {
     try {
-        const { email, password, rememberme } = req.body
-        const sql = `SELECT * FROM USER WHERE email = '${email}'`
-        const userinfo = await api(sql);
-        if (!userinfo.length) {
-            return res.send({ status: 400, data: "Not found user" });
+        const { email, password } = req.body;
+        const user = await Service.findById(email);
+
+        if (!user.length) {
+            return res.status(400).send({ status: 400, data: "Not found user" });
         }
-        const checkPassword = await AuthHelper.comparePassword(password, userinfo[0].password)
+
+        const checkPassword = await AuthHelper.comparePassword(password, user[0].password);
+
         if (!checkPassword) {
-            return res.send({ status: 400, data: "wrong password" });
-        };
-        const token = jwt.sign(
-            {
-                fullname: `${userinfo[0]?.firstName} ${userinfo[0]?.lastName}`,
-                email: userinfo[0]?.email,
-                phoneNumber: userinfo[0]?.phoneNumber,
-                birthDay: await dateHelper.convertdateDatetostring(userinfo[0]?.birthDay)
-            },
-            "FOOTBALLDER",
-            { expiresIn: "1hr" }
-        );
+            return res.status(400).send({ status: 400, data: "Wrong password" });
+        }
 
-        if (rememberme) {
-            const remember = `UPDATE USER set remember = 1 WHERE email = '${email}'`
-            await api(remember)
-        };
+        const token = await AuthHelper.generateToken(user[0]);
 
-        res.send({ status: 200, data: token });
-
+        return res.status(200).send({ status: 200, token: token });
     } catch (e) {
-        res.send({ status: 400 });
-        console.log(e.message)
+        console.error(e.message);
+        return res.status(500).send({ status: 500, data: "Server Error" });
     }
-}
+};
