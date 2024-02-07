@@ -1,4 +1,6 @@
 const api = require("../connect/connectMysql")
+const AuthHelper = require("../helper/Auth")
+const dateHelper = require("../helper/date")
 
 const method = {
     findById: async function (id, selectedFields) {
@@ -12,7 +14,6 @@ const method = {
     },
     insertUser: async function (email, password, firstName, lastName, phoneNumber, birthDay) {
         try {
-            const save = await authRepo.insertUser(email, password, firstName, lastName, phoneNumber, birthDay)
             const encryptPassword = await AuthHelper.encryptPassword(password);
             const dateNow = await dateHelper.DateNow();
             const birthdayDate = await dateHelper.convertdatestringtoDate(birthDay);
