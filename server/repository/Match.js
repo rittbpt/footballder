@@ -14,7 +14,7 @@ const method = {
 
     insert: async function (matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate) {
         try {
-            const time = await dateHelper.convertdatestringtoDate(selectDatetime)
+            const time = await dateHelper.convertdatetimestingDatetime(selectDatetime)
             const sql = `INSERT INTO MatchTable
             (
                 ${!matchName ? '' : 'matchName,'}

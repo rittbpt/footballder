@@ -12,8 +12,8 @@ exports.getall = async (req, res) => {
 
 exports.getbyId = async (req, res) => {
     try {
-        const { id } = req.body
-        const data = await Service.getbyId(id)
+        const { userId } = req.body
+        const data = await Service.getbyId(userId)
         res.send({ status: 200, data: data })
     } catch (e) {
         console.log(e.message, "Error at controller getbyId")

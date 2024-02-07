@@ -11,8 +11,14 @@ async function convertdatestringtoDate(date) {
 async function convertdateDatetostring(date) {
     return moment(date).format('DD/MM/YYYY');
 }
+
+async function convertdatetimestingDatetime(date) {
+    return moment(date , 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+}
+
 module.exports = {
     DateNow,
     convertdatestringtoDate,
-    convertdateDatetostring
+    convertdateDatetostring , 
+    convertdatetimestingDatetime
 };

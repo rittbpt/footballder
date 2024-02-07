@@ -14,10 +14,9 @@ const method = {
         }
     },
 
-    getbyId: async function (id, selectedFields) {
+    getbyId: async function (userId) {
         try {
-            const sql = `SELECT ${selectedFields || '*'} FROM Request WHERE id = ${id}`;
-            const data = await api(sql);
+            const data = await requsetRepo.getbyId(userId)
             return data;
         } catch (error) {
             console.log(error , "error at service getbyId")
