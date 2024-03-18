@@ -16,7 +16,8 @@ const method = {
                 `&key=${config.google_api}`;
             const response = await axios.get(url);
             const data = await locationHelper.changeformat(response.data)
-            const result = await locationHelper.getdetail(data)
+            const data_ = await locationHelper.getdetail(data)
+            const result = await locationHelper.getphoto(data_)
             return result
         } catch (error) {
             console.error('Error fetching data:', error);

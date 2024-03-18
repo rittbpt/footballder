@@ -27,7 +27,7 @@ async function changeformat(data) {
         }
         return result;
     } catch (e) {
-        console.error(e); 
+        console.error(e);
     }
 }
 
@@ -43,15 +43,36 @@ async function getdetail(data) {
         }
         return data;
     } catch (e) {
-        console.error(e); 
+        console.error(e);
     }
 }
 
+async function getphoto(data) {
+    try {
+        for (const location of data.locations) {
+            const placeDetailsUrl = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${location.place_id}&fields=photos&key=${config.google_api}`;
+            const placeDetailsResponse = await axios.get(placeDetailsUrl);
+            const photos = placeDetailsResponse.data.result.photos;
+            let _ = []
+            if (!!placeDetailsResponse.data.result.photos) {
+                _ = photos.map(photo => {
+                    return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${config.google_api}`;
+                });
+            } 
+            location.photolinks = _
+            delete location.photos;
+        }
+        return data;
+    } catch (e) {
+        console.error(e);
+    }
+}
 
 
 
 module.exports = {
     opentime,
     changeformat,
-    getdetail
+    getdetail,
+    getphoto
 };
