@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/src/pages/buttonStyle.dart';
 import 'package:flutter_application_1/src/pages/home/Home.dart';
+import 'package:flutter_application_1/src/pages/login/signup.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:flutter/services.dart';
 
@@ -35,6 +36,7 @@ class _LoginPageState extends State<LoginPage> {
     return Scaffold(
       body: Column(
         children: [
+          SizedBox(height: 100),
           Container(
             margin: EdgeInsets.only(top: 60),
             width: 70,
@@ -237,6 +239,26 @@ class _LoginPageState extends State<LoginPage> {
                                 ),
                               ),
                             ),
+                            Container(
+                            margin: EdgeInsets.only(bottom: 8),
+                            child: GestureDetector(
+                            onTap: () {
+                              // Navigate to the sign-up page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(builder: (context) => SignUpPage()), // Replace SignUpPage with the actual page you want to navigate to
+                              );
+                            },
+                              child: const Text(
+                                "You don't have an account yet?  Sign up",
+                                style: TextStyle(
+                                  fontSize: 12,
+                                  color: Color(0xFF146001),
+                                  fontWeight: FontWeight.bold,
+                                ),
+                              ),
+                            ),
+                           ),
                           ],
                         ),
                       )
