@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'home/Home.dart';
+import 'home/home.dart';
 import 'login/login.dart';
+import 'navigator.dart';
 
 class AppRoute {
   static const home = 'home';
@@ -8,6 +9,6 @@ class AppRoute {
 
   static get all => <String, WidgetBuilder>{
         login: (context) => const LoginPage(),
-        home: (context) => const HomePage(),
+        home: (context) =>  NavigatorPage(),
       };
 }

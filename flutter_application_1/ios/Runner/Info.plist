@@ -58,5 +58,11 @@
 		<string>UIInterfaceOrientationLandscapeLeft</string>
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
+    <key>NSPhotoLibraryUsageDescription</key>
+    <string>Need image for upload to server</string>
+    <key>NSCameraUsageDescription</key>
+    <string>Need image for upload to server</string>
+    <key>NSMicrophoneUsageDescription</key>
+    <string>Need image for upload to server</string>
 </dict>
 </plist>

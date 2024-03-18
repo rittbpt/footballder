@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:dio/dio.dart';
 import 'package:flutter_application_1/src/pages/buttonStyle.dart';
-import 'package:flutter_application_1/src/pages/home/Home.dart';
+import 'package:flutter_application_1/src/pages/home/home.dart';
+import 'package:flutter_application_1/src/pages/api_service.dart';
 import 'package:flutter_application_1/src/pages/login/signup.dart';
+import 'package:flutter_application_1/src/pages/navigator.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:flutter/services.dart';
 
@@ -195,7 +198,7 @@ class _LoginPageState extends State<LoginPage> {
                             Container(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: _handleClicklogin,
+                                onPressed: () => _handleClicklogin(context),
                                 style: styleButton,
                                 child: const Text(
                                   "SIGN IN",
@@ -273,24 +276,60 @@ class _LoginPageState extends State<LoginPage> {
     );
   }
 
-  void _handleClicklogin() {
-    print("login test (${_usernameController.text})");
-    print("login test (${_passwordController.text})");
+  void _handleClicklogin(BuildContext context) async {
+  print("login test (${_usernameController.text})");
+  print("login test (${_passwordController.text})");
+
+  try {
+    // Construct login API request
+    String apiUrl = 'http://localhost:3099/Login';
+    Map<String, dynamic> requestBody = {
+      'email': _usernameController.text,
+      'password': _passwordController.text,
+    };
+
+    // // Send login API request
+    ApiResponse response = await postloginApi(apiUrl, requestBody);
+
+    // // Extract token from the response
+    String? token = response.token;
+    print("kuyken ${response.token}");
+
+    if (token != null) {
+      // Token obtained, store it securely (e.g., using shared_preferences)
+      // You can now navigate to the home screen or perform other actions
+      Navigator.pushReplacement(
+        context,
+        MaterialPageRoute(builder: (context) => NavigatorPage()),
+      );
+    } else {
+      // No token obtained, handle the error (e.g., show error message)
+    }
+  } catch (error) {
+  if (error is DioError) {
+    // If the error is a DioError, handle it using handleApiError
+    handleApiError(context, error);
+  } else {
+    // If it's not a DioError, handle it accordingly
+    print('Non-DioError occurred: $error');
   }
+}
+}
+
 
   void handleLineSignIn() async {
     try {
       final result = await LineSDK.instance.login();
 
-      var displayname = result.userProfile?.displayName;
+      var displayName = result.userProfile?.displayName;
       var userId = result.userProfile?.userId;
       var imageUrl = result.userProfile?.pictureUrl;
 
       Navigator.push(
         context,
         MaterialPageRoute(
-          builder: (context) => HomePage(
-              userId: userId, displayname: displayname, imageUrl: imageUrl),
+          builder: (context) => NavigatorPage(
+            userId: userId, displayName: displayName, imageUrl: imageUrl),
         ),
       );
     } on PlatformException catch (e) {
