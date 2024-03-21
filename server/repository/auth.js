@@ -17,8 +17,8 @@ const method = {
             const encryptPassword = await AuthHelper.encryptPassword(user.password);
             const dateNow = await dateHelper.DateNow();
             const birthdayDate = await dateHelper.convertdatestringtoDate(user.birthDay);
-            const sql = `INSERT INTO USER (email, password, create_time, firstName, lastName, phoneNumber, birthDay, active)
-            VALUES ('${user.email}', '${encryptPassword}', '${dateNow}', '${user.firstName}', '${user.lastName}', '${user.phoneNumber}', '${birthdayDate}', 1)`;
+            const sql = `INSERT INTO USER (email, password, create_time, firstName, lastName, phoneNumber, birthDay, active , type)
+            VALUES ('${user.email}', '${encryptPassword}', '${dateNow}', '${user.firstName}', '${user.lastName}', '${user.phoneNumber}', '${birthdayDate}', 1 , 'footballder')`;
             await api(sql)
         } catch (error) {
             console.log(error)
