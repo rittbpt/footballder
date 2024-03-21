@@ -2,9 +2,9 @@
 const authRepo = require("../repository/auth")
 
 const method = {
-    findById: async function (id, selectedFields) {
+    findById: async function (userinfo, selectedFields) {
         try {
-            const data = await authRepo.findById(id, selectedFields);
+            const data = await authRepo.findById(userinfo, selectedFields);
             return data;
         } catch (error) {
             throw error;
@@ -17,7 +17,20 @@ const method = {
         } catch (error) {
             console.log(error)
         }
-    }
+    },
+    findByLineId: async function (user) {
+        try {
+            const data = await authRepo.findByLineId(user.userId);
+            if (!data.length) {
+                await authRepo.insertUser(user)
+            } else {
+                await authRepo.update(user)
+            }
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
 
 };
 
