@@ -27,8 +27,21 @@ async function generateToken(user) {
     return token;
 }
 
+async function generateTokenline(user) {
+    const token = jwt.sign(
+        {
+            name: user.displayName,
+            userId: user.userId,
+        },
+        "FOOTBALLDER",
+        { expiresIn: "1hr" }
+    );
+    return token;
+}
+
 module.exports = {
     encryptPassword,
     comparePassword,
-    generateToken
+    generateToken,
+    generateTokenline
 };

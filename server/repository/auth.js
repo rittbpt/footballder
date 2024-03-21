@@ -24,6 +24,16 @@ const method = {
             console.log(error)
         }
     },
+    insertLineuser: async function (user) {
+        try {
+            const dateNow = await dateHelper.DateNow();
+            const sql = `INSERT INTO USER (create_time, firstName, photo, active , type ,Lineuserid)
+            VALUES ('${dateNow}', '${user.displayName}', '${pictureUrl}',  1, 'line', '${user.userId}')`;
+            await api(sql)
+        } catch (error) {
+            console.log(error)
+        }
+    },
     findByLineId: async function (userId) {
         try {
             const sql = `SELECT * FROM USER WHERE Lineuserid = '${userId}' AND type = 'line'`
@@ -31,7 +41,16 @@ const method = {
         } catch (error) {
             console.log(error)
         }
-    }
+    },
+    getuserline: async function (user) {
+        try {
+            const sql = `SELECT * FROM USER WHERE Lineuserid = '${user.userId}' AND type = 'line'`;
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
 }
 
 module.exports = method;

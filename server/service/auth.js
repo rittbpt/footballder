@@ -21,12 +21,15 @@ const method = {
     findByLineId: async function (user) {
         try {
             const data = await authRepo.findByLineId(user.userId);
+            let userinfo;
             if (!data.length) {
-                await authRepo.insertUser(user)
+                await authRepo.insertLineuser(user)
+                userinfo = await authRepo.getuserline(user)
             } else {
                 await authRepo.update(user)
+                userinfo = await authRepo.getuserline(user)
             }
-            return data;
+            return userinfo;
         } catch (error) {
             throw error;
         }

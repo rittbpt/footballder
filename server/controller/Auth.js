@@ -44,19 +44,7 @@ exports.Linelogin = async (req, res) => {
     try {
         const userinfo = req.body
         const user = await Service.findByLineId(userinfo);
-
-        if (!user.length) {
-            return res.status(400).send({ status: 400, data: "Not found user" });
-        }
-
-        const checkPassword = await AuthHelper.comparePassword(password, user[0].password);
-
-        if (!checkPassword) {
-            return res.status(400).send({ status: 400, data: "Wrong password" });
-        }
-
-        const token = await AuthHelper.generateToken(user[0]);
-
+        const token = await AuthHelper.generateTokenline(userinfo);
         return res.status(200).send({ status: 200, token: token, data: user[0] });
     } catch (e) {
         console.error(e.message);
