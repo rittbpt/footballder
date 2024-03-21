@@ -2,8 +2,8 @@ const Service = require("../service/Location");
 
 exports.getlocation = async (req, res) => {
     try {
-        const { latitude, longtitude } = req.body
-        const data = await Service.getlocation(latitude, longtitude);
+        console.log("1")
+        const data = await Service.getlocation();
         res.json({ status: 200, data: data });
     } catch (e) {
         console.log("Error service getlocation location", e.message);

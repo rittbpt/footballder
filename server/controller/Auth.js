@@ -33,7 +33,7 @@ exports.Login = async (req, res) => {
 
         const token = await AuthHelper.generateToken(user[0]);
 
-        return res.status(200).send({ status: 200, token: token });
+        return res.status(200).send({ status: 200, token: token ,data : user[0] });
     } catch (e) {
         console.error(e.message);
         return res.status(500).send({ status: 500, data: "Server Error" });
