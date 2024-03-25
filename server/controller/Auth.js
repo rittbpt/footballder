@@ -18,14 +18,14 @@ exports.Register = async (req, res) => {
 
 exports.Login = async (req, res) => {
     try {
-        const { email, password } = req.body;
-        const user = await Service.findById(email);
+        const userinfo = req.body;
+        const user = await Service.findById(userinfo);
 
         if (!user.length) {
             return res.status(400).send({ status: 400, data: "Not found user" });
         }
 
-        const checkPassword = await AuthHelper.comparePassword(password, user[0].password);
+        const checkPassword = await AuthHelper.comparePassword(userinfo.password, user[0].password);
 
         if (!checkPassword) {
             return res.status(400).send({ status: 400, data: "Wrong password" });
