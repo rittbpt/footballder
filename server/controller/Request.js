@@ -12,7 +12,7 @@ exports.getall = async (req, res) => {
 
 exports.getbyId = async (req, res) => {
     try {
-        const { userId } = req.body
+        const { userId } = req.params
         const data = await Service.getbyId(userId)
         res.send({ status: 200, data: data })
     } catch (e) {
