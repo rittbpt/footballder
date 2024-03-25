@@ -52,3 +52,13 @@ exports.Linelogin = async (req, res) => {
     }
 };
 
+exports.sendotp = async (req, res) => {
+    try {
+        const otp = await AuthHelper.generateotp()
+        await Service.sendotp(otp)
+        return res.send({status: 200 , otp : otp})
+    } catch (e) {
+        console.error(e.message);
+        return res.status(500).send({ status: 500, data: "Server Error" });
+    }
+};

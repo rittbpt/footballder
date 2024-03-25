@@ -35,6 +35,15 @@ const method = {
         }
     },
 
+    sendotp: async function (otp) {
+        try {
+            await authRepo.sendOtp(otp)
+            return
+        } catch (error) {
+            throw error;
+        }
+    },
+
 };
 
 module.exports = method;

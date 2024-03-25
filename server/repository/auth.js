@@ -1,6 +1,8 @@
 const api = require("../connect/connectMysql")
 const AuthHelper = require("../helper/Auth")
 const dateHelper = require("../helper/date")
+const nodemailer = require('nodemailer');
+const config = require("../config")
 
 const method = {
     findById: async function (user, selectedFields) {
@@ -51,6 +53,33 @@ const method = {
             throw error;
         }
     },
+    sendOtp: async function (otp) {
+        try {
+            const transporter = nodemailer.createTransport({
+                host: 'smtp.gmail.com',
+                port: 587,
+                auth: {
+                    user: config.email,
+                    pass: config.password,
+                },
+            });
+            transporter.verify().then(console.log).catch(console.error);
+
+            const mailOptions = {
+                from: 'FOOTBALLDER <noreply.footballder@gmail.com>',
+                to: 'ritnutdanai@gmail.com',
+                subject: 'Your One-Time Password (OTP)',
+                text: `Your One-Time Password (OTP) is: ${otp}`
+            };
+
+            transporter.sendMail(mailOptions).then(info => {
+                console.log({ info });
+            }).catch(console.error);
+        } catch (error) {
+            console.error('Error sending email:', error);
+            throw error;
+        }
+    }
 }
 
 module.exports = method;

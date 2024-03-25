@@ -1,6 +1,7 @@
 var jwt = require("jsonwebtoken");
 const bcrypt = require('bcrypt');
 const dateHelper = require("../helper/date")
+const otpGenerator = require('otp-generator');
 
 async function encryptPassword(password) {
     const saltRounds = 10;
@@ -39,9 +40,15 @@ async function generateTokenline(user) {
     return token;
 }
 
+async function generateotp() {
+    const otp = otpGenerator.generate(6, { digits: true, alphabets: false, upperCase: false, specialChars: false });
+    return otp;
+}
+
 module.exports = {
     encryptPassword,
     comparePassword,
     generateToken,
-    generateTokenline
+    generateTokenline,
+    generateotp
 };
