@@ -13,13 +13,10 @@ const client = new MongoClient(uri, {
 async function findData(chatId) {
     try {
         await client.connect();
-
-        await client.connect();
         const database = client.db('footballder');
         const collection = database.collection('chat');
 
         const result = await collection.find({ chatId: parseInt(chatId) }).toArray();
-
         return result;
     } finally {
         await client.close();
