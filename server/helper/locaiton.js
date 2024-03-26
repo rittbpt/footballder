@@ -96,6 +96,32 @@ async function getdetailone(data) {
     }
 }
 
+async function getdetailone(data) {
+    try {
+        const result = []
+        for (const location of data) {
+            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${location.locationId}&fields=name,opening_hours,photos&key=${config.google_api}`;
+            const response = await axios.get(url);
+            const placeDetails = response.data.result;
+            const _ = {}
+            console.log(location)
+            _.namelocation = placeDetails.name
+            _.day = await dateHelper.textday(location.selectDatetime)
+            _.time = await dateHelper.changetotime(location.selectDatetime)
+            _.amount = location.amount
+            _.Description = !location.Description ? '-' : location.Description
+            _.matchName = location.matchName
+            _.position = location.Position
+            _.firstName = location.firstName
+            _.age = await dateHelper.calculateage(location.birthDay)
+            result.push(_)
+        }
+        return result;
+    } catch (e) {
+        console.error(e);
+    }
+}
+
 
 module.exports = {
     opentime,

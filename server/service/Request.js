@@ -1,6 +1,7 @@
 const api = require("../connect/connectMysql");
 const dateHelper = require("../helper/date");
 const requsetRepo = require("../repository/request")
+const locationHelper = require("../helper/locaiton")
 
 const method = {
     getall: async function (selectedFields) {
@@ -17,7 +18,9 @@ const method = {
     getbyId: async function (userId) {
         try {
             const data = await requsetRepo.getbyId(userId)
-            return data;
+            const _ = await locationHelper.getdetailone(data)
+
+            return _;
         } catch (error) {
             console.log(error , "error at service getbyId")
             throw error;

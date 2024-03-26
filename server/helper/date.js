@@ -13,22 +13,30 @@ async function convertdateDatetostring(date) {
 }
 
 async function convertdatetimestingDatetime(date) {
-    return moment(date , 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
+    return moment(date, 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
 }
 
 async function textday(date) {
-    return moment(date , 'YYYY-MM-DD HH:mm:ss').format('DD MMMM YYYY');
+    return moment(date, 'YYYY-MM-DD HH:mm:ss').format('DD MMMM YYYY');
 }
 
 async function changetotime(date) {
-    return moment(date , 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+    return moment(date, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+}
+
+async function calculateage(date) {
+    const birthday = moment(date);
+    const now = moment();
+    const age = now.diff(birthday, 'years');
+    return age
 }
 
 module.exports = {
     DateNow,
     convertdatestringtoDate,
-    convertdateDatetostring , 
+    convertdateDatetostring,
     convertdatetimestingDatetime,
     textday,
-    changetotime
+    changetotime,
+    calculateage
 };
