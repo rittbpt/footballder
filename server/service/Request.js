@@ -10,7 +10,7 @@ const method = {
             const data = await api(sql);
             return data;
         } catch (error) {
-            console.log(error , "error at service getall")
+            console.log(error, "error at service getall")
             throw error;
         }
     },
@@ -22,33 +22,44 @@ const method = {
 
             return _;
         } catch (error) {
-            console.log(error , "error at service getbyId")
+            console.log(error, "error at service getbyId")
             throw error;
         }
     },
 
-    insert : async function (createTime, MatchId, Position , userId) {
+    insert: async function (createTime, MatchId, Position, userId) {
         try {
             const createtime = await dateHelper.convertdatestringtoDate(createTime)
             const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${MatchId}' , '${Position}' , 'wait' , ${userId})`;
             const data = await api(sql);
             return data;
         } catch (error) {
-            console.log(error , "error at service insert")
+            console.log(error, "error at service insert")
             throw error;
         }
     },
-    getRecent : async function (userId) {
+    getRecent: async function (userId) {
         try {
             const data = await requsetRepo.getRecent(userId)
             return data;
         } catch (error) {
-            console.log(error , "error at service insert")
+            console.log(error, "error at service insert")
+            throw error;
+        }
+    },
+    updateRqstatus: async function (requestID , status) {
+        try {
+            await requsetRepo.updateRqstatus(requestID , status)
+        } catch (error) {
+            console.log(error, "error at service insert")
             throw error;
         }
     },
 
-    
+
+
+
+
 };
 
 module.exports = method;

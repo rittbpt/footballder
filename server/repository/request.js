@@ -34,6 +34,15 @@ const method = {
             throw error;
         }
     },
+
+    updateRqstatus: async function (requestID, status) {
+        try {
+            const sql = `UPDATE Request SET statusRequest = ${status ? "accept" : "reject"} WHERE id = ${requestID}`;
+            await api(sql);
+        } catch (error) {
+            throw error;
+        }
+    },
 }
 
 module.exports = method;

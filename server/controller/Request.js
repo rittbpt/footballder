@@ -43,3 +43,17 @@ exports.getRecent = async (req, res) => {
     }
 };
 
+exports.updateRqstatus = async (req, res) => {
+    try {
+        const { requestID , status } = req.query
+        await Service.updateRqstatus(requestID , status)
+        res.send({ status: 200 })
+    } catch (e) {
+        console.log(e.message, "Error at controller insert")
+        res.send({ status: 400 });
+    }
+};
+
+
+
+
