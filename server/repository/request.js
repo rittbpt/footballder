@@ -43,6 +43,15 @@ const method = {
             throw error;
         }
     },
+    requestbyme: async function (userId) {
+        try {
+            const sql = `SELECT MatchId FROM Request WHERE userId = ${userId}`;
+            const data = await api(sql);
+            return data
+        } catch (error) {
+            throw error;
+        }
+    },
 }
 
 module.exports = method;

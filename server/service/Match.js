@@ -1,20 +1,21 @@
 const MatchRepo = require("../repository/Match")
 const locationHelper = require("../helper/locaiton")
+const reRepo = require("../repository/request")
 
 
 const method = {
     getall: async function (userId) {
         try {
-            const had = []
-            const data = await MatchRepo.getall(userId)
-            const result = []
-            data.forEach(element => {
-                if (!had.includes(element.id)) {
-                    had.push(element.id)
-                    result.push(element)
+            const match = await MatchRepo.getall(userId)
+            const req = await reRepo.requestbyme(userId)
+            const list_matchid = req.map((element) => { return element.MatchId })
+            const matchs = []
+            match.forEach(element => {
+                if (!list_matchid.includes(element.id)) {
+                    matchs.push(element)
                 }
             });
-            const _ = await locationHelper.getdetailone(result)
+            const _ = await locationHelper.getdetailone(matchs)
 
             return _;
         } catch (error) {
