@@ -27,7 +27,7 @@ const method = {
     insert : async function (createTime, MatchId, Position , userId) {
         try {
             const createtime = await dateHelper.convertdatestringtoDate(createTime)
-            const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES (${createtime} , '${MatchId}' , '${Position}' , 'wait' , ${userId})`;
+            const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${MatchId}' , '${Position}' , 'wait' , ${userId})`;
             const data = await api(sql);
             return data;
         } catch (error) {
