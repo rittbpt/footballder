@@ -5,5 +5,5 @@ module.exports = function (app) {
     app.get("/getAllrequest", Checktoken, Request.getall);
     app.get("/getrequestbyId/:userId", Checktoken, Request.getbyId);
     app.post("/insertrequest", Checktoken, Request.insert);
-    app.get("/getRecent" , Checktoken , Request.getRecent)
+    app.get("/getRecent/:userId" , Checktoken , Request.getRecent)
 }

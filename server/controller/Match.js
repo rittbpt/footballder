@@ -2,8 +2,8 @@ const Service = require("../service/Match");
 
 exports.getall = async (req, res) => {
     try {
-        const { selectedFields, userId } = req.body
-        const data = await Service.getall(selectedFields, userId);
+        const { userId } = req.params
+        const data = await Service.getall(userId);
         res.send({ status: 200, data: data });
     } catch (e) {
         console.log(e.message);

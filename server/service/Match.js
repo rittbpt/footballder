@@ -2,10 +2,18 @@ const MatchRepo = require("../repository/Match")
 
 
 const method = {
-    getall: async function (selectedFields , userId) {
+    getall: async function (userId) {
         try {
-            const data = await MatchRepo.getall(selectedFields , userId)
-            return data;
+            const had = []
+            const data = await MatchRepo.getall(userId)
+            const result = []
+            data.forEach(element => {
+                if (!had.includes(element.id)) {
+                    had.push(element.id)
+                    result.push(element)
+                }
+            });
+            return result;
         } catch (error) {
             throw error;
         }

@@ -65,11 +65,59 @@ const method = {
             });
             transporter.verify().then(console.log).catch(console.error);
 
+            const htmlContent = `
+            <!DOCTYPE html>
+            <html lang="en">
+            <head>
+                <meta charset="UTF-8">
+                <meta name="viewport" content="width=device-width, initial-scale=1.0">
+                <title>One-Time Password (OTP)</title>
+                <style>
+                    body {
+                        font-family: Arial, sans-serif;
+                        background-color: #f4f4f4;
+                        padding: 20px;
+                    }
+                    .container {
+                        max-width: 600px;
+                        margin: 0 auto;
+                        background-color: #ffffff;
+                        border-radius: 5px;
+                        padding: 20px;
+                        box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+                    }
+                    h1 {
+                        color: #333333;
+                    }
+                    p {
+                        color: #666666;
+                    }
+                    .otp {
+                        font-size: 24px;
+                        color: #007bff;
+                    }
+                    .footer {
+                        margin-top: 20px;
+                        color: #999999;
+                    }
+                </style>
+            </head>
+            <body>
+                <div class="container">
+                    <h1>Your One-Time Password (OTP)</h1>
+                    <p>Your One-Time Password (OTP) is: <span class="otp">${otp}</span></p>
+                    <p>Please use this OTP to complete your authentication process.</p>
+                    <p class="footer">Thank you, <br> FOOTBALLDER Team</p>
+                </div>
+            </body>
+            </html>
+        `;
+
             const mailOptions = {
                 from: 'FOOTBALLDER <noreply.footballder@gmail.com>',
-                to: 'ritnutdanai@gmail.com',
+                to: 'puttisun.t@ku.th',
                 subject: 'Your One-Time Password (OTP)',
-                text: `Your One-Time Password (OTP) is: ${otp}`
+                html: htmlContent
             };
 
             transporter.sendMail(mailOptions).then(info => {

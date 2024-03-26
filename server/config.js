@@ -1,7 +1,7 @@
 const config = {
     google_api : "AIzaSyCEWisuIrOXCYop0EoLKoyTWVK1LNjgzcg",
     email: "noreply.footballder@gmail.com",
-    password: "rycorsqucebajmjw" , 
+    password: "rrsmctojxuejyepb" , 
     httpPort: 3099
 }
 

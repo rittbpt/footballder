@@ -34,7 +34,7 @@ exports.insert = async (req, res) => {
 
 exports.getRecent = async (req, res) => {
     try {
-        const { userId } = req.body
+        const { userId } = req.params
         const data = await Service.getRecent(userId)
         res.send({ status: 200, data: data })
     } catch (e) {
