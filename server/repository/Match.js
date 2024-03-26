@@ -6,7 +6,7 @@ const method = {
         try {
             const sql = `SELECT mt.*, rq.id AS rqid 
             FROM MatchTable AS mt 
-            LEFT JOIN Request AS rq ON rq.MacthId = mt.id 
+            LEFT JOIN Request AS rq ON rq.MatchId = mt.id 
             WHERE (rq.userId != ${userId} OR rq.userId IS NULL) 
               AND mt.userCreate != ${userId}
             `

@@ -24,10 +24,10 @@ const method = {
         }
     },
 
-    insert : async function (createTime, MacthId, Postition , userId) {
+    insert : async function (createTime, MatchId, Position , userId) {
         try {
             const createtime = await dateHelper.convertdatestringtoDate(createTime)
-            const sql = `INSERT INTO Request (createTime , MacthId , Postition , userId) VALUES (${createtime} , '${MacthId}' , '${Postition}' , 'wait' , ${userId})`;
+            const sql = `INSERT INTO Request (createTime , MatchId , Position , userId) VALUES (${createtime} , '${MatchId}' , '${Position}' , 'wait' , ${userId})`;
             const data = await api(sql);
             return data;
         } catch (error) {
