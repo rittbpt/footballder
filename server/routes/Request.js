@@ -6,6 +6,6 @@ module.exports = function (app) {
     app.get("/getrequestbyId/:userId", Checktoken, Request.getbyId);
     app.post("/insertrequest", Checktoken, Request.insert);
     app.get("/getRecent/:userId" , Checktoken , Request.getRecent);
-    app.get("/updateRqstatus" , Checktoken , Request.updateRqstatus);
+    app.post("/updateRqstatus" , Checktoken , Request.updateRqstatus);
     
 }

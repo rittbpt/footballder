@@ -45,7 +45,7 @@ exports.getRecent = async (req, res) => {
 
 exports.updateRqstatus = async (req, res) => {
     try {
-        const { requestID , status } = req.query
+        const { requestID , status } = req.body
         await Service.updateRqstatus(requestID , status)
         res.send({ status: 200 })
     } catch (e) {
