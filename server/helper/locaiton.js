@@ -96,7 +96,7 @@ async function getdetailone(data) {
     }
 }
 
-async function getdetailone(data) {
+async function getdetailrq(data) {
     try {
         const result = []
         for (const location of data) {
@@ -129,4 +129,5 @@ module.exports = {
     getdetail,
     getphoto,
     getdetailone,
+    getdetailrq
 };

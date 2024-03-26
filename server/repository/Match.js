@@ -51,6 +51,21 @@ const method = {
         }
     },
 
+    getmatchdone: async function (userId) {
+        try {
+            const sql = `SELECT mt.*, rq.*
+            FROM Request AS rq 
+            LEFT JOIN MatchTable AS mt ON rq.MatchId = mt.id 
+            WHERE rq.userId = ${userId} AND rq.statusRequest = 'accept'
+            `
+
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
 
 
 

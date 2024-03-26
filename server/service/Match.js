@@ -15,7 +15,7 @@ const method = {
                 }
             });
             const _ = await locationHelper.getdetailone(result)
-            
+
             return _;
         } catch (error) {
             throw error;
@@ -25,6 +25,15 @@ const method = {
         try {
             const data = await MatchRepo.insert(matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate)
             return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    getmatchdone: async function (userId) {
+        try {
+            const data = await MatchRepo.getmatchdone(userId)
+            const _ = await locationHelper.getdetailone(data)
+            return _;
         } catch (error) {
             throw error;
         }

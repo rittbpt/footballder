@@ -21,3 +21,15 @@ exports.insert = async (req, res) => {
         res.send({ status: 400 });
     }
 };
+
+exports.getmatchdone = async (req, res) => {
+    try {
+        const { userId } = req.params
+        const data = await Service.getmatchdone(userId)
+        res.send({ status: 200, data: data })
+    } catch (e) {
+        console.log(e.message, "Error at controller Match insert")
+        res.send({ status: 400 });
+    }
+};
+

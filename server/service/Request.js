@@ -18,7 +18,7 @@ const method = {
     getbyId: async function (userId) {
         try {
             const data = await requsetRepo.getbyId(userId)
-            const _ = await locationHelper.getdetailone(data)
+            const _ = await locationHelper.getdetailrq(data)
 
             return _;
         } catch (error) {
