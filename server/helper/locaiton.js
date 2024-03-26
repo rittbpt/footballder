@@ -1,5 +1,6 @@
 const axios = require('axios');
 const config = require("../config")
+const dateHelper = require("../helper/date")
 async function opentime(open) {
     return open.map(day => {
         const [dayOfWeek, timeRange] = day.split(': ');
@@ -58,7 +59,7 @@ async function getphoto(data) {
                 _ = photos.map(photo => {
                     return `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${photo.photo_reference}&key=${config.google_api}`;
                 });
-            } 
+            }
             location.photolinks = _
             delete location.photos;
         }
@@ -68,11 +69,38 @@ async function getphoto(data) {
     }
 }
 
+async function getdetailone(data) {
+    try {
+        const result = []
+        for (const location of data) {
+            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${location.locationId}&fields=name,opening_hours,photos&key=${config.google_api}`;
+            const response = await axios.get(url);
+            const placeDetails = response.data.result;
+            const _ = {}
+            _.namelocation = placeDetails.name
+            if (!placeDetails.photos) {
+                _.photo = '-'
+            } else {
+                _.photo = `https://maps.googleapis.com/maps/api/place/photo?maxwidth=400&photoreference=${placeDetails.photos[0].photo_reference}&key=${config.google_api}`;
+            }
+            _.day = await dateHelper.textday(location.selectDatetime)
+            _.time = await dateHelper.changetotime(location.selectDatetime)
+            _.amount = location.amount
+            _.Description = !location.Description ? '-' : location.Description
+            _.matchName = location.matchName
+            result.push(_)
+        }
+        return result;
+    } catch (e) {
+        console.error(e);
+    }
+}
 
 
 module.exports = {
     opentime,
     changeformat,
     getdetail,
-    getphoto
+    getphoto,
+    getdetailone,
 };

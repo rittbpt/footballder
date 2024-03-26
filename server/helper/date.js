@@ -16,9 +16,19 @@ async function convertdatetimestingDatetime(date) {
     return moment(date , 'YYYY-MM-DD HH:mm:ss').format('YYYY-MM-DD HH:mm:ss');
 }
 
+async function textday(date) {
+    return moment(date , 'YYYY-MM-DD HH:mm:ss').format('DD MMMM YYYY');
+}
+
+async function changetotime(date) {
+    return moment(date , 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
+}
+
 module.exports = {
     DateNow,
     convertdatestringtoDate,
     convertdateDatetostring , 
-    convertdatetimestingDatetime
+    convertdatetimestingDatetime,
+    textday,
+    changetotime
 };

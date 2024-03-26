@@ -1,4 +1,5 @@
 const MatchRepo = require("../repository/Match")
+const locationHelper = require("../helper/locaiton")
 
 
 const method = {
@@ -13,7 +14,9 @@ const method = {
                     result.push(element)
                 }
             });
-            return result;
+            const _ = await locationHelper.getdetailone(result)
+            
+            return _;
         } catch (error) {
             throw error;
         }
