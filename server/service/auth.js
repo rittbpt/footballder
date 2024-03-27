@@ -35,9 +35,9 @@ const method = {
         }
     },
 
-    sendotp: async function (otp) {
+    sendotp: async function (email ,otp) {
         try {
-            await authRepo.sendOtp(otp)
+            await authRepo.sendOtp(email ,otp)
             return
         } catch (error) {
             throw error;

@@ -62,7 +62,7 @@ const method = {
             throw error;
         }
     },
-    sendOtp: async function (otp) {
+    sendOtp: async function (email, otp) {
         try {
             const transporter = nodemailer.createTransport({
                 host: 'smtp.gmail.com',
@@ -124,7 +124,7 @@ const method = {
 
             const mailOptions = {
                 from: 'FOOTBALLDER <noreply.footballder@gmail.com>',
-                to: 'puttisun.t@ku.th',
+                to: email,
                 subject: 'Your One-Time Password (OTP)',
                 html: htmlContent
             };
