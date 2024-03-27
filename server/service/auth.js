@@ -43,6 +43,14 @@ const method = {
             throw error;
         }
     },
+    changepassword : async function (email , password) {
+        try {
+            await authRepo.changepassword(email , password)
+            return
+        } catch (error) {
+            throw error;
+        }
+    },
 
 };
 

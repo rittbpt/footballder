@@ -52,6 +52,16 @@ const method = {
             throw error;
         }
     },
+    changepassword: async function (userId, password) {
+        try {
+            const encryptPassword = await AuthHelper.encryptPassword(password);
+            const sql = `UPDATE USER SET password = '${encryptPassword}' WHERE email = '${email}'`;
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
     sendOtp: async function (otp) {
         try {
             const transporter = nodemailer.createTransport({
