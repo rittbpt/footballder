@@ -35,17 +35,23 @@ const method = {
         }
     },
 
-    sendotp: async function (email ,otp) {
+    sendotp: async function (email, otp) {
         try {
-            await authRepo.sendOtp(email ,otp)
+            const user = await authRepo.findById({ email: email })
+            if (!user.length) {
+                return false
+            } else {
+                await authRepo.sendOtp(email, otp)
+                return true
+            }
             return
         } catch (error) {
             throw error;
         }
     },
-    changepassword : async function (email , password) {
+    changepassword: async function (email, password) {
         try {
-            await authRepo.changepassword(email , password)
+            await authRepo.changepassword(email, password)
             return
         } catch (error) {
             throw error;

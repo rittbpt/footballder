@@ -39,6 +39,7 @@ const method = {
         try {
             const sql = `SELECT * FROM USER WHERE Lineuserid = '${userId}' AND type = 'line'`
             const data = await api(sql)
+            return data
         } catch (error) {
             console.log(error)
         }
