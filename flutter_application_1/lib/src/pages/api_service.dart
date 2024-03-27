@@ -6,22 +6,29 @@ import 'package:flutter/material.dart';
 class ApiResponse {
   final dynamic data;
   final String? token;
+  final Map<String, dynamic>? userData;
 
-  ApiResponse({required this.data, this.token});
+  ApiResponse({required this.data, this.token, this.userData});
 }
 
 String? globalToken;
+ApiResponse? globalApiResponse;
 
 Future<ApiResponse> postloginApi(String apiUrl, Map<String, dynamic> requestBody) async {
   var dio = Dio();
   try {
-    var response = await dio.get(apiUrl, data: requestBody,);
+    var response = await dio.post(apiUrl, data: requestBody,);
     
     // Extract token from response headers or body
     globalToken = response.data['token'];
 
+    // Extract user data from response data
+    Map<String, dynamic>? extractedUserData = response.data['data'];
+
+    globalApiResponse = ApiResponse(data: response.data, token: globalToken, userData: extractedUserData);
+
     // Return ApiResponse with data and token
-    return ApiResponse(data: response.data, token: globalToken);
+    return ApiResponse(data: response.data, token: globalToken, userData: extractedUserData);
   } catch (error) {
     throw error;
   }
@@ -45,6 +52,45 @@ Future<Response<dynamic>> postApi(String apiUrl, Map<String, dynamic> requestBod
 
     // Make API call with options
     var response = await dio.post(apiUrl, data: requestBody, options: options);
+    
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+Future<Response<dynamic>> getApi(String apiUrl,) async {
+  var dio = Dio();
+  
+  try {
+
+    if (globalToken == null) {
+      throw Exception('Token not available');
+    }
+    // Create headers map
+    var headers = <String, dynamic>{
+      'token': globalToken,
+    };
+
+    // Create Options object
+    Options options = Options(headers: headers);
+
+    // Make API call with options
+    var response = await dio.get(apiUrl, options: options);
+    
+    return response;
+  } catch (error) {
+    throw error;
+  }
+}
+
+Future<Response<dynamic>> getOtpApi(String apiUrl, Map<String, dynamic> requestBody) async {
+  var dio = Dio();
+  
+  try {
+
+    // Make API call with options
+    var response = await dio.post(apiUrl, data: requestBody);
     
     return response;
   } catch (error) {

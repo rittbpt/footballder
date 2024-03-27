@@ -34,7 +34,8 @@ class SignUpPageState extends State<SignUpPage> {
     return Scaffold(
       appBar: AppBar(
         automaticallyImplyLeading: true,
-        backgroundColor: Color.fromARGB(255, 131, 223, 134),
+        backgroundColor: Color.fromARGB(255, 243, 243, 243),
+        // backgroundColor: Color.fromARGB(255, 131, 223, 134),
         title: Text(
           'Create an Account',
           style: TextStyle(
@@ -58,10 +59,10 @@ class SignUpPageState extends State<SignUpPage> {
               children: [
                 SizedBox(height: 20),
                 buildImagePicker(),
-                buildTextField('Email', emailController),
-                buildTextField('Phone Number', phoneNumberController),
-                buildTextField('Firstname', firstNameController),
-                buildTextField('Lastname', lastNameController),
+                buildTextField('Email', emailController, 'yourEmail@gmail.com'),
+                buildTextField('Phone Number', phoneNumberController, '0xxxxxxxxx'),
+                buildTextField('Firstname', firstNameController, 'firstname'),
+                buildTextField('Lastname', lastNameController, 'lastname'),
                 DateDropdown(
                   onChanged: (DateTime? dateTime) {
                     setState(() {
@@ -122,7 +123,7 @@ class SignUpPageState extends State<SignUpPage> {
     }
   }
 
-  Widget buildTextField(String label, TextEditingController controller) {
+  Widget buildTextField(String label, TextEditingController controller, String hintText) {
     return Container(  // Adjust the width as needed
       // height: 154,  
       decoration: BoxDecoration(boxShadow: [
@@ -156,6 +157,8 @@ class SignUpPageState extends State<SignUpPage> {
                 border: OutlineInputBorder(
                   borderSide: BorderSide.none,
                 ),
+                hintText: hintText,
+                hintStyle: TextStyle(color: Color.fromARGB(255, 137, 156, 132)),
               ),
             ),
           ),
@@ -265,7 +268,37 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
       child: ElevatedButton(
         onPressed: () {
           // Perform sign-up action and check if passwords match
-          if (passwordController.text == confirmPasswordController.text) {
+          if (
+            emailController.text.isEmpty ||
+            phoneNumberController.text.isEmpty ||
+            firstNameController.text.isEmpty ||
+            lastNameController.text.isEmpty ||
+            passwordController.text.isEmpty ||
+            confirmPasswordController.text.isEmpty ||
+            selectedDate == null ||
+            _selectedImage == null ) {
+              showDialog(
+              context: context,
+              builder: (BuildContext context) {
+                return AlertDialog(
+                  backgroundColor: const Color.fromARGB(255, 255, 255, 255),
+                  title: Text('Error'),
+                  content: Text('Please enter everyline.'),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      style: TextButton.styleFrom(
+                        primary: Color(0xFF146001), // Set the text color here
+                      ),
+                      child: Text('OK'),
+                    ),
+                  ],
+                );
+              },
+            );
+          } else if (passwordController.text == confirmPasswordController.text){
             signUp();
           } else {
             // Handle password mismatch
@@ -323,25 +356,26 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
   DateTime? birthday = selectedDate;
 
   // Create a FormData object to include text and image data
-  var formData = FormData.fromMap({
+   Map<String, dynamic> FormData ={
     'email': email,
     'phoneNumber': phoneNumber,
     'firstName': firstName,
     'lastName': lastName,
     'password': password,
-    'birthDay': birthday?.toString() ?? '',
+    'birthDay': birthday?.toString(),
     'photo': "1",
-  });
+  };
 
+  print(birthday?.toString());
   print(MultipartFile.fromFile(_selectedImage!.path));
-
   try {
-    var response = await dio.post('http://localhost:3099/Register', data: formData);
+    var response = await dio.post('http://localhost:3099/Register', data: FormData);
     
     // Handle the API response
     if (response.statusCode == 200) {
       // API call was successful
       print('API Response: ${response.statusCode} ${response.data}');
+      print(FormData);
 
       // Navigate back to the login page
       Navigator.pop(context);

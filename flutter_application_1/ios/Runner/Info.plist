@@ -64,5 +64,14 @@
     <string>Need image for upload to server</string>
     <key>NSMicrophoneUsageDescription</key>
     <string>Need image for upload to server</string>
+    <key>LSApplicationQueriesSchemes</key>
+    <array>
+      <string>comgooglemaps</string>
+      <!-- Add other schemes if required -->
+    </array>
+	<key>NSLocationWhenInUseUsageDescription</key>
+ 	<string>This app needs your location to test the location feature of the Google Maps plugin.</string>
+ 	<key>io.flutter.embedded_views_preview</key>
+ 	<true/>
 </dict>
 </plist>

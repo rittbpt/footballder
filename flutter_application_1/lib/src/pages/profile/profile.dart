@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_application_1/src/pages/profile/editProfile.dart';
+import 'package:flutter_application_1/src/pages/profile/friend.dart';
 
 class ProfilePage extends StatefulWidget {
   final String? userId;
@@ -72,6 +74,7 @@ class _ProfilePageState extends State<ProfilePage> {
             height: 75,
             child: CircularButton(
                   icon: Icons.edit,
+                  iconColor: Color(0xFF146001),
                   text: 'EDIT PROFILE ',
                   onPressed: () {
                     Navigator.push(
@@ -95,15 +98,22 @@ class _ProfilePageState extends State<ProfilePage> {
             width: 65,
             height: 65,
             child: CircularButton(
-                  icon: Icons.person_add,
-                  text: 'ADD FRIEND',
+                  icon: Icons.group,
+                  iconColor: Color(0xFF146001),
+                  text: 'FRIEND',
+                  onPressed: () {
+                    Navigator.push(
+                      context,
+                      MaterialPageRoute(builder: (context) => FriendPage()),
+                    );
+                  },
                 ),
           ),
           Positioned(
             bottom: 160,
-            left: 280,
+            left: 290,
             child: Text(
-              "ADD FRIEND",
+              "FRIENDS",
               style: TextStyle(fontSize: 12),
             ),
           ),
@@ -116,9 +126,10 @@ class _ProfilePageState extends State<ProfilePage> {
 class CircularButton extends StatelessWidget {
   final IconData icon;
   final String text;
+  final Color? iconColor;
   final VoidCallback? onPressed;
 
-  const CircularButton({Key? key, required this.icon, required this.text, this.onPressed})
+  const CircularButton({Key? key, required this.icon, this.iconColor, required this.text, this.onPressed})
       : super(key: key);
 
   @override
@@ -148,23 +159,12 @@ class CircularButton extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(icon),
+            Icon(
+              icon,
+              color: iconColor,
+              ),
           ],
         ),
-      ),
-    );
-  }
-}
-
-class EditProfilePage extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('Edit Profile'),
-      ),
-      body: Center(
-        child: Text('Edit Profile Page'),
       ),
     );
   }

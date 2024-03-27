@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_application_1/src/pages/home/home.dart';
 import 'package:flutter_application_1/src/pages/profile/profile.dart';
 import 'package:flutter_application_1/src/pages/chat/chat.dart';
+import 'package:flutter_application_1/src/pages/findmatch/searchMatch.dart';
+import 'package:flutter_application_1/src/pages/tinder/tinder.dart';
 
 class NavigatorPage extends StatefulWidget {
 
@@ -20,8 +22,8 @@ class _NavigatorPageState extends State<NavigatorPage> {
 
   final List<Widget> _pages = [
     HomePage(),
-    Page2(),
-    Page3(),
+    SearchMatchPage(),
+    TinderPage(),
     ChatSelectionPage(),
     ProfilePage(),
   ];
@@ -47,7 +49,7 @@ class _NavigatorPageState extends State<NavigatorPage> {
             label: 'Search',
           ),
           BottomNavigationBarItem(
-            icon: Icon(Icons.favorite),
+            icon: Icon(Icons.sports_soccer),
             label: '',
           ),
           BottomNavigationBarItem(
@@ -69,30 +71,6 @@ class _NavigatorPageState extends State<NavigatorPage> {
 }
 
 
-class Page2 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Page 2'),
-    );
-  }
-}
 
-class Page3 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Page 3'),
-    );
-  }
-}
 
-class Page4 extends StatelessWidget {
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: Text('Page 4'),
-    );
-  }
-}
 

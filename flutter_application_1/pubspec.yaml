@@ -31,11 +31,15 @@ dependencies:
   flutter:
     sdk: flutter
   http: 
-  image_picker:
+  image_picker: 
   permission_handler: 
-  dio:
-  google_fonts:
+  dio: 
+  google_fonts: 6.1.0
   provider: 
+  url_launcher: 
+  socket_io_client:
+  google_maps_flutter: ^2.1.1
+  geolocator: ^8.0.1
 
 
 

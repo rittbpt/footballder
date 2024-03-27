@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/src/pages/chat/chatScreen.dart';
 
 class FriendChatBox extends StatelessWidget {
   final String name;
@@ -18,8 +19,24 @@ class FriendChatBox extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: EdgeInsets.all(10),
+    return GestureDetector(
+      onTap: () {
+        // Navigate to chat screen when tapped
+        Navigator.of(context).push(
+          MaterialPageRoute(
+            builder: (context) => ChatScreen(name: name), // Replace ChatScreen with your actual chat screen widget
+          ),
+        );
+      },
+      child: Container(
+      padding: EdgeInsets.all(15),
+      decoration: BoxDecoration(
+          border: Border.all(
+            color: const Color.fromARGB(255, 243, 243, 243), // Border color
+            width: 1.0, // Border width
+          ),
+          borderRadius: BorderRadius.circular(10), // Border radius
+        ),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -35,7 +52,7 @@ class FriendChatBox extends StatelessWidget {
                 Text(
                   name,
                   style: TextStyle(
-                    fontWeight: FontWeight.bold,
+                    fontWeight: isUnread ? FontWeight.bold : FontWeight.normal,
                     fontSize: 16,
                   ),
                 ),
@@ -63,9 +80,10 @@ class FriendChatBox extends StatelessWidget {
                       backgroundColor: Colors.blue,
                     )
                   : SizedBox(),
-            ],
-          ),
-        ],
+             ],
+           ),
+         ],
+       ),
       ),
     );
   }

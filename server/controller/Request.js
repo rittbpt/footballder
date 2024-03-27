@@ -23,8 +23,8 @@ exports.getbyId = async (req, res) => {
 
 exports.insert = async (req, res) => {
     try {
-        const { MatchId, Position, userId } = req.body
-        const data = await Service.insert(MatchId, Position, userId)
+        const { createTime, MatchId, Position, userId } = req.body
+        const data = await Service.insert(createTime, MatchId, Position, userId)
         res.send({ status: 200, data: data })
     } catch (e) {
         console.log(e.message, "Error at controller insert")

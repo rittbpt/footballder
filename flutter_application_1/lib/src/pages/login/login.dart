@@ -5,6 +5,7 @@ import 'package:flutter_application_1/src/pages/home/home.dart';
 import 'package:flutter_application_1/src/pages/api_service.dart';
 import 'package:flutter_application_1/src/pages/login/signup.dart';
 import 'package:flutter_application_1/src/pages/navigator.dart';
+import 'package:flutter_application_1/src/pages/login/forgetPW.dart';
 import 'package:flutter_line_sdk/flutter_line_sdk.dart';
 import 'package:flutter/services.dart';
 
@@ -179,12 +180,23 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ],
                           ),
-                          const Text(
-                            "Forget password ?",
-                            style: TextStyle(
-                              fontSize: 12,
-                              color: Color(0xFF146001),
-                              fontWeight: FontWeight.bold,
+                          GestureDetector(
+                            onTap: () {
+                              // Navigate to the sign-up page
+                              Navigator.push(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) =>
+                                        ForgetPasswordPage()), // Replace SignUpPage with the actual page you want to navigate to
+                              );
+                            },
+                            child: const Text(
+                              "Forget password ?",
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: Color(0xFF146001),
+                                fontWeight: FontWeight.bold,
+                              ),
                             ),
                           ),
                         ],
@@ -243,25 +255,27 @@ class _LoginPageState extends State<LoginPage> {
                               ),
                             ),
                             Container(
-                            margin: EdgeInsets.only(bottom: 8),
-                            child: GestureDetector(
-                            onTap: () {
-                              // Navigate to the sign-up page
-                              Navigator.push(
-                                context,
-                                MaterialPageRoute(builder: (context) => SignUpPage()), // Replace SignUpPage with the actual page you want to navigate to
-                              );
-                            },
-                              child: const Text(
-                                "You don't have an account yet?  Sign up",
-                                style: TextStyle(
-                                  fontSize: 12,
-                                  color: Color(0xFF146001),
-                                  fontWeight: FontWeight.bold,
+                              margin: EdgeInsets.only(bottom: 8),
+                              child: GestureDetector(
+                                onTap: () {
+                                  // Navigate to the sign-up page
+                                  Navigator.push(
+                                    context,
+                                    MaterialPageRoute(
+                                        builder: (context) =>
+                                            SignUpPage()), // Replace SignUpPage with the actual page you want to navigate to
+                                  );
+                                },
+                                child: const Text(
+                                  "You don't have an account yet?  Sign up",
+                                  style: TextStyle(
+                                    fontSize: 12,
+                                    color: Color(0xFF146001),
+                                    fontWeight: FontWeight.bold,
+                                  ),
                                 ),
                               ),
                             ),
-                           ),
                           ],
                         ),
                       )
@@ -277,45 +291,44 @@ class _LoginPageState extends State<LoginPage> {
   }
 
   void _handleClicklogin(BuildContext context) async {
-  print("login test (${_usernameController.text})");
-  print("login test (${_passwordController.text})");
+    print("login test (${_usernameController.text})");
+    print("login test (${_passwordController.text})");
 
-  try {
-    // Construct login API request
-    String apiUrl = 'http://localhost:3099/Login';
-    Map<String, dynamic> requestBody = {
-      'email': _usernameController.text,
-      'password': _passwordController.text,
-    };
+    try {
+      // Construct login API request
+      String apiUrl = 'http://localhost:3099/Login';
+      Map<String, dynamic> requestBody = {
+        'email': _usernameController.text,
+        'password': _passwordController.text,
+      };
 
-    // // Send login API request
-    ApiResponse response = await postloginApi(apiUrl, requestBody);
+      // // Send login API request
+      ApiResponse response = await postloginApi(apiUrl, requestBody);
 
-    // // Extract token from the response
-    String? token = response.token;
-    print("kuyken ${response.token}");
+      // // Extract token from the response
+      String? token = response.token;
+      print("kuyken ${response.token}");
 
-    if (token != null) {
-      // Token obtained, store it securely (e.g., using shared_preferences)
-      // You can now navigate to the home screen or perform other actions
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (context) => NavigatorPage()),
-      );
-    } else {
-      // No token obtained, handle the error (e.g., show error message)
+      if (token != null) {
+        // Token obtained, store it securely (e.g., using shared_preferences)
+        // You can now navigate to the home screen or perform other actions
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavigatorPage()),
+        );
+      } else {
+        // No token obtained, handle the error (e.g., show error message)
+      }
+    } catch (error) {
+      if (error is DioError) {
+        // If the error is a DioError, handle it using handleApiError
+        handleApiError(context, error);
+      } else {
+        // If it's not a DioError, handle it accordingly
+        print('Non-DioError occurred: $error');
+      }
     }
-  } catch (error) {
-  if (error is DioError) {
-    // If the error is a DioError, handle it using handleApiError
-    handleApiError(context, error);
-  } else {
-    // If it's not a DioError, handle it accordingly
-    print('Non-DioError occurred: $error');
   }
-}
-}
-
 
   void handleLineSignIn() async {
     try {
@@ -325,11 +338,13 @@ class _LoginPageState extends State<LoginPage> {
       var userId = result.userProfile?.userId;
       var imageUrl = result.userProfile?.pictureUrl;
 
+      print(result.userProfile?.data);
+
       Navigator.push(
         context,
         MaterialPageRoute(
           builder: (context) => NavigatorPage(
-            userId: userId, displayName: displayName, imageUrl: imageUrl),
+              userId: userId, displayName: displayName, imageUrl: imageUrl),
         ),
       );
     } on PlatformException catch (e) {
