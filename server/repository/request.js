@@ -20,7 +20,7 @@ const method = {
     getbyId: async function (userId) {
         try {
             const sql = `
-                SELECT rq.* , user.* ,mt.*
+                SELECT rq.* , user.* ,mt.* , rq.id AS rqId , mt.id AS MatchId
                     FROM Request AS rq 
                     JOIN MatchTable AS mt ON mt.id = rq.MatchId 
                     JOIN USER AS user ON user.id = rq.userId 

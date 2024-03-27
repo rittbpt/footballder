@@ -88,6 +88,7 @@ async function getdetailone(data) {
             _.amount = location.amount
             _.Description = !location.Description ? '-' : location.Description
             _.matchName = location.matchName
+            _.MatchId = location.MatchId
             result.push(_)
         }
         return result;
@@ -114,6 +115,9 @@ async function getdetailrq(data) {
             _.position = location.Position
             _.firstName = location.firstName
             _.age = await dateHelper.calculateage(location.birthDay)
+            _.MatchId = location.MatchId
+            _.rqId = location.rqId
+
             result.push(_)
         }
         return result;
