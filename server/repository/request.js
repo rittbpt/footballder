@@ -7,7 +7,6 @@ const method = {
                 SELECT rq.* , mt.* 
                     FROM Request AS rq 
                     JOIN MatchTable AS mt ON mt.id = rq.MatchId 
-                    JOIN Location AS lo ON lo.id = mt.locationId 
                     JOIN USER AS user ON user.id = rq.userId 
                 WHERE rq.userId = ${userId} AND checkIn = 1
           `;
