@@ -4,7 +4,7 @@ const method = {
     getRecent: async function (userId) {
         try {
             const sql = `
-                SELECT rq.* , mt.* 
+                SELECT rq.* , mt.* , user.*
                     FROM Request AS rq 
                     JOIN MatchTable AS mt ON mt.id = rq.MatchId 
                     JOIN USER AS user ON user.id = rq.userId 

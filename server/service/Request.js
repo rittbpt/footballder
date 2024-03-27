@@ -41,7 +41,9 @@ const method = {
     getRecent: async function (userId) {
         try {
             const data = await requsetRepo.getRecent(userId)
-            return data;
+            const _ = await locationHelper.getdetailone(data)
+
+            return _;
         } catch (error) {
             console.log(error, "error at service insert")
             throw error;
