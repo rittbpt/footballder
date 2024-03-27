@@ -10,6 +10,8 @@ class MapsPage extends StatefulWidget {
 class _MapsPageState extends State<MapsPage> {
   late Position userLocation;
   late GoogleMapController mapController;
+  final double destinationLatitude = 37.785834;
+  final double destinationLongitude = -122.406417;
 
   void _onMapCreated(GoogleMapController controller) {
     mapController = controller;
@@ -64,8 +66,27 @@ class _MapsPageState extends State<MapsPage> {
               myLocationEnabled: true,
               initialCameraPosition: CameraPosition(
                 target: LatLng(userLocation.latitude, userLocation.longitude),
-                zoom: 15,
+                zoom: 7,
               ),
+              markers: {
+                Marker(
+                  markerId: MarkerId('destination'),
+                  position: LatLng(destinationLatitude, destinationLongitude),
+                  icon: BitmapDescriptor.defaultMarkerWithHue(BitmapDescriptor
+                      .hueGreen), 
+                ),
+              },
+              circles: Set.from([
+                Circle(
+                  circleId: CircleId('circle'),
+                  center: LatLng(destinationLatitude, destinationLongitude),
+                  radius:
+                      1000, 
+                  fillColor: Colors.green.withOpacity(0.3), 
+                  strokeColor: Colors.green, 
+                  strokeWidth: 2, 
+                ),
+              ]),
             );
           } else {
             return Center(
