@@ -23,7 +23,7 @@ async function generateToken(user) {
             birthDay: await dateHelper.convertdateDatetostring(user?.birthDay)
         },
         "FOOTBALLDER",
-        { expiresIn: null }
+        { expiresIn: "1hr" }
     );
     return token;
 }
