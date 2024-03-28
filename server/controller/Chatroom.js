@@ -8,7 +8,7 @@ exports.insertChatroom = async (req, res) => {
         obj.chatroomId = chatroomId.insertId
         await chatService.insert(obj)
 
-        res.send({ status: 200, chatId: chatroomId })
+        return
     } catch (e) {
         console.log(e.message)
         return res.send({ status: 400 });

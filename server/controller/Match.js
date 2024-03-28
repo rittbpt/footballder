@@ -16,10 +16,10 @@ exports.insert = async (req, res) => {
     try {
         const { matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate } = req.body
         const data = await Service.insert(matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate)
-        req.MatchId = data
-        req.MatchName = matchName
-        req.userId = userCreate
-        req.type = 0
+        req.body.MatchId = data.insertId
+        req.body.MatchName = matchName
+        req.body.userId = userCreate
+        req.body.type = 0
         await chatroomcontroller.insertChatroom(req)
         res.send({ status: 200, data: data })
     } catch (e) {
