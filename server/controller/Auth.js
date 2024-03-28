@@ -56,8 +56,13 @@ exports.sendotp = async (req, res) => {
     try {
         const { email } = req.body
         const otp = await AuthHelper.generateotp()
-        await Service.sendotp(email,otp)
-        return res.send({ status: 200, otp: otp })
+        const result = await Service.sendotp(email, otp)
+        if (result) {
+            return res.send({ status: 200, otp: otp })
+        } else {
+            return res.status(400).send({ status: 400, data: "Not found user" });
+
+        }
     } catch (e) {
         console.error(e.message);
         return res.status(500).send({ status: 500, data: "Server Error" });

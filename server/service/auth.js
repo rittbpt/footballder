@@ -1,4 +1,5 @@
 
+const { email } = require("../config");
 const authRepo = require("../repository/auth")
 
 const method = {
@@ -35,17 +36,22 @@ const method = {
         }
     },
 
-    sendotp: async function (email ,otp) {
+    sendotp: async function (email, otp) {
         try {
-            await authRepo.sendOtp(email ,otp)
-            return
+            const user = await authRepo.findById({ email: email })
+            if (!user, length) {
+                return false
+            } else {
+                await authRepo.sendOtp(email, otp)
+                return true
+            }
         } catch (error) {
             throw error;
         }
     },
-    changepassword : async function (email , password) {
+    changepassword: async function (email, password) {
         try {
-            await authRepo.changepassword(email , password)
+            await authRepo.changepassword(email, password)
             return
         } catch (error) {
             throw error;
