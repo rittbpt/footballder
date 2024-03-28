@@ -29,7 +29,7 @@ const method = {
         try {
             const dateNow = await dateHelper.DateNow();
             const sql = `INSERT INTO USER (create_time, firstName, photo, active , type ,Lineuserid)
-            VALUES ('${dateNow}', '${user.displayName}', '${pictureUrl}',  1, 'line', '${user.userId}')`;
+            VALUES ('${dateNow}', '${user.displayName}', '${user.pictureUrl}',  1, 'line', '${user.userId}')`;
             await api(sql)
         } catch (error) {
             console.log(error)

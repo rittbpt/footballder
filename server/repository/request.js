@@ -34,6 +34,26 @@ const method = {
         }
     },
 
+    getbyme: async function (userId) {
+        try {
+            const sql = `
+                SELECT rq.* , user.* ,mt.* , rq.id AS rqId , mt.id AS MatchId
+                    FROM Request AS rq 
+                    JOIN MatchTable AS mt ON mt.id = rq.MatchId 
+                    JOIN USER AS user ON user.id = rq.userId 
+                WHERE rq.statusRequest = 'wait' AND rq.userId = ${userId}
+          `;
+
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
+
+    
+
     updateRqstatus: async function (requestID, status) {
         try {
             const sql = `UPDATE Request SET statusRequest = ${status ? "accept" : "reject"} WHERE id = ${requestID}`;

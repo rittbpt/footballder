@@ -18,9 +18,10 @@ const method = {
     getbyId: async function (userId) {
         try {
             const data = await requsetRepo.getbyId(userId)
+            const data_ = await requsetRepo.getbyme(userId)
+            const __ = await locationHelper.getdetailrq(data_)
             const _ = await locationHelper.getdetailrq(data)
-
-            return _;
+            return { request: __, myrequest : _ };
         } catch (error) {
             console.log(error, "error at service getbyId")
             throw error;
@@ -49,9 +50,9 @@ const method = {
             throw error;
         }
     },
-    updateRqstatus: async function (requestID , status) {
+    updateRqstatus: async function (requestID, status) {
         try {
-            await requsetRepo.updateRqstatus(requestID , status)
+            await requsetRepo.updateRqstatus(requestID, status)
         } catch (error) {
             console.log(error, "error at service insert")
             throw error;
