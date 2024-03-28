@@ -57,9 +57,9 @@ const method = {
             throw error;
         }
     },
-    uploadphoto: async function (filename, userId) {
+    uploadphoto: async function (filename, email) {
         try {
-            await authRepo.uploadphoto(filename, userId)
+            await authRepo.uploadphoto(filename, email)
             return
         } catch (error) {
             throw error;

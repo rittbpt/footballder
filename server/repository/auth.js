@@ -52,9 +52,9 @@ const method = {
             throw error;
         }
     },
-    uploadphoto: async function (filename, userId) {
+    uploadphoto: async function (filename, email) {
         try {
-            const sql = `UPDATE USER SET photo = '${filename}' WHERE id = ${userId}`;
+            const sql = `UPDATE USER SET photo = '${filename}' WHERE email = '${email}'`;
             const data = await api(sql);
             return data;
         } catch (error) {

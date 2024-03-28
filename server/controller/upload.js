@@ -5,8 +5,8 @@ const fs = require('fs');
 exports.upload = async function (req, res) {
     try {
         const filename = req.filename
-        const { userId } = req.params
-        await service.uploadphoto(filename, userId)
+        const { email } = req.params
+        await service.uploadphoto(filename, email)
         res.send({ status: 200, data: req.filename })
     } catch (e) {
         console.log(e.message)
