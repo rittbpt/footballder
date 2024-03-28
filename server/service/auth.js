@@ -39,7 +39,7 @@ const method = {
     sendotp: async function (email, otp) {
         try {
             const user = await authRepo.findById({ email: email })
-            if (!user, length) {
+            if (!user.length) {
                 return false
             } else {
                 await authRepo.sendOtp(email, otp)
