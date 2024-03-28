@@ -52,7 +52,7 @@ const method = {
             throw error;
         }
     },
-    changepassword: async function (userId, password) {
+    changepassword: async function (email, password) {
         try {
             const encryptPassword = await AuthHelper.encryptPassword(password);
             const sql = `UPDATE USER SET password = '${encryptPassword}' WHERE email = '${email}'`;
