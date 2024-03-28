@@ -25,7 +25,7 @@ const method = {
     insert: async function (matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate) {
         try {
             const data = await MatchRepo.insert(matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate)
-            return data;
+            return data[0].id;
         } catch (error) {
             throw error;
         }

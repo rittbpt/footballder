@@ -5,7 +5,7 @@ const method = {
 
     insert: async function (data) {
         try {
-            const sql = `INSERT INTO Chat (userId , chatId , readed ) VALUES (${data.userId} ,${data.chatroomId} , 1 )`
+            const sql = `INSERT INTO Chat (userId , chatId , readed ) VALUES (${data.userId} ,${data.chatroomId} , 0 )`
             const chatId = await api(sql)
             return chatId
         } catch (e) {
@@ -39,9 +39,9 @@ const method = {
             throw e;
         }
     },
-    newchatmessage: async function (userId, chatId) {
+    newchatmessage: async function (userId, chatId , data) {
         try {
-            const sql = `UPDATE Chat SET readed = 0 WHERE userId != ${userId} AND chatId = ${chatId}`
+            const sql = `UPDATE Chat SET readed = 0 , WHERE userId != ${userId} AND chatId = ${chatId}`
             await api(sql)
             return
         } catch (e) {

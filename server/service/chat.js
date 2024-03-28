@@ -14,7 +14,8 @@ const method = {
     insertchat: async function (chatdt) {
         try {
             const data = await chatRepo.insertchat(chatdt)
-            await chatRepo.newchatmessage(chatdt.userId, chatdt.chatId)
+            await chatRepo.newchatmessage(chatdt.userId, chatdt.chatId )
+            await chatroomRepo.newchatmessage(chatdt.chatId , chatdt.data)
         } catch (e) {
             console.log(e.message)
             throw e;

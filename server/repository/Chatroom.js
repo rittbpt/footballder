@@ -32,7 +32,17 @@ const method = {
             throw e;
         }
     },
-    
+    newchatmessage: async function (chatId , data) {
+        try {
+            const sql = `UPDATE Chatroom SET message = '${data}' WHERE ChatID = ${chatId}`
+            const chats = await api(sql)
+            return chats
+        } catch (e) {
+            console.log(e.message)
+            throw e;
+        }
+    },
+
 }
 
 module.exports = method;
