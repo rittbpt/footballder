@@ -117,7 +117,7 @@ async function getdetailrq(data) {
             _.age = await dateHelper.calculateage(location.birthDay)
             _.MatchId = location.MatchId
             _.rqId = location.rqId
-
+            _.photo = location.photo
             result.push(_)
         }
         return result;
