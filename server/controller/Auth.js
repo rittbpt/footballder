@@ -61,7 +61,6 @@ exports.sendotp = async (req, res) => {
             return res.send({ status: 200, otp: otp })
         } else {
             return res.status(400).send({ status: 400, data: "Not found user" });
-
         }
     } catch (e) {
         console.error(e.message);

@@ -4,6 +4,10 @@ async function DateNow() {
     return moment().format('YYYY-MM-DD HH:mm:ss');
 }
 
+async function DateNow_() {
+    return moment().format('YYYY-MM-DD');
+}
+
 async function convertdatestringtoDate(date) {
     return moment(date, 'DD/MM/YYYY').format('YYYY-MM-DD HH:mm:ss');
 }
@@ -38,5 +42,6 @@ module.exports = {
     convertdatetimestingDatetime,
     textday,
     changetotime,
-    calculateage
+    calculateage,
+    DateNow_
 };

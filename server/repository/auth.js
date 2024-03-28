@@ -52,12 +52,21 @@ const method = {
             throw error;
         }
     },
+    uploadphoto: async function (filename, userId) {
+        try {
+            const sql = `UPDATE USER SET photo = '${filename}' WHERE id = ${userId}`;
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
     changepassword: async function (email, password) {
         try {
             const encryptPassword = await AuthHelper.encryptPassword(password);
             const sql = `UPDATE USER SET password = '${encryptPassword}' WHERE email = '${email}'`;
-            const data = await api(sql);
-            return data;
+            await api(sql);
+            return
         } catch (error) {
             throw error;
         }
