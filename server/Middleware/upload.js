@@ -7,10 +7,10 @@ const storage = multer.diskStorage({
         cb(null, path.join(__dirname, '../uploads'));
     },
     filename: function (req, file, cb) {
-        const { userId } = req.params; // ใช้ req.query ในการดึง userId
+        const { email } = req.params; // ใช้ req.query ในการดึง userId
         const ext = path.extname(file.originalname);
         const timestamp = moment().format('YYYY-MM-DD'); // ใช้ timestamp เพื่อให้ไม่ซ้ำกัน
-        const filename = `userphoto-${userId}-${timestamp}-${Date.now()}${ext}`; // เพิ่มจำนวนในชื่อไฟล์
+        const filename = `userphoto-${email}-${timestamp}-${Date.now()}${ext}`; // เพิ่มจำนวนในชื่อไฟล์
         req.filename = filename;
         cb(null, filename);
     },

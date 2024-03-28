@@ -54,7 +54,7 @@ const method = {
     },
     uploadphoto: async function (filename, email) {
         try {
-            const sql = `UPDATE USER SET photo = '${filename}' WHERE email = '${email}'`;
+            const sql = `UPDATE USER SET photo = '${config.url}/download/${filename}' WHERE email = '${email}'`;
             const data = await api(sql);
             return data;
         } catch (error) {
