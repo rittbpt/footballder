@@ -33,7 +33,7 @@ const method = {
             const data_ = await requsetRepo.getbyme(userId)
             const __ = await locationHelper.getdetailrq(data_)
             const _ = await locationHelper.getdetailrq(data)
-            return { request: __, myrequest: _ };
+            return { request: _, myrequest: __ };
         } catch (error) {
             console.log(error, "error at service getbyId")
             throw error;
