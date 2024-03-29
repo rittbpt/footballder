@@ -46,6 +46,21 @@ exports.insertChatroom = async (req, res) => {
             console.log(e.message)
             return res.send({ status: 400 });
         }
+    },
+    exports.InsertPrivateChatroom = async (req, res) => {
+        try {
+            const { userId, friendId } = req.body
+            const obj = {}
+            obj.type = 1
+            obj.MatchId = -1
+            obj.MatchName = "chat-friend"
+            const chatroomId = await chatroomService.insert(obj)
+            await chatService.insert({ userId: userId, chatroomId: chatroomId.insertId })
+            await chatService.insert({ userId: friendId, chatroomId: chatroomId.insertId })
+            res.send({ status: 200 })
+        } catch (e) {
+            return res.send({ status: 400 });
+        }
     }
 
 

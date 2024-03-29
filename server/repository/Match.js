@@ -12,6 +12,16 @@ const method = {
         }
     },
 
+    getinfo: async function (MatchId) {
+        try {
+            const sql = `SELECT * FROM MatchTable WHERE id = ${MatchId}`
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     updatestatus: async function (MatchId) {
         try {
             const sql = `UPDATE MatchTable set statusMatch = 'full' WHERE id = ${MatchId}`

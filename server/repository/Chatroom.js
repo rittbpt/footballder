@@ -43,6 +43,16 @@ const method = {
             throw e;
         }
     },
+    privatechat: async function (userId , chatId) {
+        try {
+            const sql = `SELECT u.* , c.readed FROM Chat AS c JOIN USER AS u ON u.id = c.userId WHERE c.userId != '${userId}' AND c.chatId = '${chatId}'`
+            const userinfo = await api(sql)
+            return userinfo
+        } catch (e) {
+            console.log(e.message)
+            throw e;
+        }
+    },
 
 }
 
