@@ -51,10 +51,10 @@ const method = {
             throw error;
         }
     },
-    resave: async function (MatchId, userId) {
+    resave: async function (req) {
         try {
             const createtime = await dateHelper.DateNow()
-            const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${MatchId}' , 'all' , 'accept' , ${userId})`;
+            const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${req.MatchId}' , 'all' , 'accept' , ${req.userId})`;
             const data = await api(sql);
             return data;
         } catch (error) {
