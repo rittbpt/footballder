@@ -72,6 +72,15 @@ const method = {
             throw error;
         }
     },
+    rqcountmatch: async function (MatchId) {
+        try {
+            const sql = `SELECT COUNT(*) AS count FROM Request WHERE MatchId = ${MatchId}`;
+            const data = await api(sql);
+            return data
+        } catch (error) {
+            throw error;
+        }
+    },
 }
 
 module.exports = method;

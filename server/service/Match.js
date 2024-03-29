@@ -9,15 +9,22 @@ const method = {
             const match = await MatchRepo.getall(userId)
             const req = await reRepo.requestbyme(userId)
             const list_matchid = req.map((element) => { return element.MatchId })
-            const matchs = []
-            match.forEach(element => {
-                if (!list_matchid.includes(element.id)) {
-                    matchs.push(element)
+
+
+            const _ = await locationHelper.getdetailone(match)
+            const promises = _.map(async (element) => {
+                if (!list_matchid.includes(element.MatchId)) {
+                    const n = await reRepo.rqcountmatch(element.MatchId);
+                    element.available = element.amount + 1 - n[0].count;
+                    return element;
                 }
             });
-            const _ = await locationHelper.getdetailone(matchs)
 
-            return _;
+            const matchs = await Promise.all(promises);
+
+            const filteredMatchs = matchs.filter(element => element !== undefined);
+
+            return filteredMatchs;
         } catch (error) {
             throw error;
         }

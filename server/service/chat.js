@@ -32,7 +32,9 @@ const method = {
                 _.photo = user[0].photo
                 _.firstName = user[0].firstName
                 _.data = element.data
-                _.Time = element.time
+                _.date = element.time.split(' ')[0]
+                _.time = element.time.split(' ')[1].slice(0,5)
+
                 result.push(_)
             }
             return result
