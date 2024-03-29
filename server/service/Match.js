@@ -34,7 +34,15 @@ const method = {
         try {
             const data = await MatchRepo.getmatchdone(userId)
             const _ = await locationHelper.getdetailone(data)
-            return _;
+            const result = []
+            const had = []
+            _.forEach((element) => {
+                if (!had.includes(element.MatchId)) {
+                    result.push(element)
+                    had.push(element.MatchId)
+                }
+            })
+            return result;
         } catch (error) {
             throw error;
         }
