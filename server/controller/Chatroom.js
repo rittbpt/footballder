@@ -17,12 +17,11 @@ exports.insertChatroom = async (req, res) => {
 
     exports.joinchat = async (req, res) => {
         try {
-            const obj = req.query
+            const obj = req.body
             const chatroomId = await chatroomService.findcharoomidbymatchid(obj.MatchId)
             obj.chatroomId = chatroomId
             await chatService.insert(obj)
-
-            res.send({ status: 200 })
+            return
         } catch (e) {
             console.log(e.message)
             return res.send({ status: 400 });

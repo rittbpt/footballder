@@ -1,5 +1,5 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
-
+const dateHelper = require('../helper/date')
 const uri = "mongodb+srv://ritnutdanai:cd9ivlG7okWOrTdf@footballder.imc8lg1.mongodb.net/?retryWrites=true&w=majority&appName=footballder";
 
 const client = new MongoClient(uri, {
@@ -26,6 +26,7 @@ async function findData(chatId) {
 
 async function insert(data) {
     try {
+        data.time = await dateHelper.DateNow()
         await client.connect();
         const database = client.db('footballder');
         const collection = database.collection('chat');

@@ -1,4 +1,5 @@
 const api = require("../connect/connectMysql")
+const dateHelper = require("../helper/date")
 
 const method = {
     insert: async function (data) {
@@ -23,7 +24,6 @@ const method = {
     },
     chats: async function (userId) {
         try {
-            console.log(userId)
             const sql = `SELECT c.readed ,cr.* FROM Chatroom AS cr JOIN Chat AS c ON c.chatId = cr.ChatID WHERE c.userId = ${userId}`
             const chats = await api(sql)
             return chats
@@ -34,7 +34,8 @@ const method = {
     },
     newchatmessage: async function (chatId , data) {
         try {
-            const sql = `UPDATE Chatroom SET message = '${data}' WHERE ChatID = ${chatId}`
+            const time = await dateHelper.DateNow()
+            const sql = `UPDATE Chatroom SET time = '${time}' , message = '${data}' WHERE ChatID = ${chatId}`
             const chats = await api(sql)
             return chats
         } catch (e) {

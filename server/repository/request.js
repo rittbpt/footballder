@@ -56,7 +56,8 @@ const method = {
 
     updateRqstatus: async function (requestID, status) {
         try {
-            const sql = `UPDATE Request SET statusRequest = ${status ? "accept" : "reject"} WHERE id = ${requestID}`;
+            console.log(requestID , status)
+            const sql = `UPDATE Request SET statusRequest = '${status ? "accept" : "reject"}' WHERE id = ${requestID}`;
             await api(sql);
         } catch (error) {
             throw error;

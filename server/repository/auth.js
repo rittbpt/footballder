@@ -14,6 +14,15 @@ const method = {
             throw error;
         }
     },
+    getinfo: async function (userId) {
+        try {
+            const sql = `SELECT photo,firstName FROM USER WHERE id = ${userId}`;
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
     insertUser: async function (user) {
         try {
             const encryptPassword = await AuthHelper.encryptPassword(user.password);

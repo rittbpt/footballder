@@ -14,6 +14,7 @@ const method = {
     },
     insertchat: async function (data) {
         try {
+            console.log(data)
             await insert(data)
         } catch (e) {
             console.log(e.message)
@@ -31,7 +32,7 @@ const method = {
     },
     readchat: async function (userId, chatId) {
         try {
-            const sql = `UPDATE Chat SET readed = 1 WHERE userId = ${userId} AND chatId = ${chatId}`
+            const sql = `UPDATE Chat SET readed = 0 WHERE userId = ${userId} AND chatId = ${chatId}`
             await api(sql)
             return
         } catch (e) {
@@ -41,7 +42,7 @@ const method = {
     },
     newchatmessage: async function (userId, chatId , data) {
         try {
-            const sql = `UPDATE Chat SET readed = 0 , WHERE userId != ${userId} AND chatId = ${chatId}`
+            const sql = `UPDATE Chat SET readed = 1  WHERE userId != ${userId} AND chatId = ${chatId}`
             await api(sql)
             return
         } catch (e) {

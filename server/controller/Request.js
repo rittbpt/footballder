@@ -1,4 +1,5 @@
 const Service = require("../service/Request")
+const chat = require("../controller/Chatroom")
 
 exports.getall = async (req, res) => {
     try {
@@ -47,6 +48,12 @@ exports.updateRqstatus = async (req, res) => {
     try {
         const { requestID, status } = req.body
         await Service.updateRqstatus(requestID, status)
+        const data = await Service.getuserre(requestID)
+        req.body.userId = data.userId
+        req.body.MatchId = data.MatchId
+        if (status) {
+            await chat.joinchat(req)
+        }
         res.send({ status: 200 })
     } catch (e) {
         console.log(e.message, "Error at controller insert")
