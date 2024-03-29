@@ -16,6 +16,19 @@ exports.Register = async (req, res) => {
     }
 }
 
+exports.updateprofile = async (req, res) => {
+    try {
+        const userinfo = req.body;
+        await Service.updateprofile(userinfo)
+        return res.send({ status: 200 });
+    } catch (e) {
+        console.log(e.message)
+        return res.send({ status: 400 });
+    }
+}
+
+
+
 exports.Login = async (req, res) => {
     try {
         const userinfo = req.body;

@@ -14,6 +14,17 @@ const method = {
             throw error;
         }
     },
+
+    updateprofile: async function (user) {
+        try {
+            const sql = `UPDATE USER set email = '${user.email}' , firstName = '${user.firstName}' , lastName = '${user.lastName}' , phoneNumber = '${user.phoneNumber}' , birthDay = '${user.birthDay}' WHERE id = '${user.userId}'`;
+            await api(sql);
+        } catch (error) {
+            throw error;
+        }
+    },
+
+
     getinfo: async function (userId) {
         try {
             const sql = `SELECT photo,firstName FROM USER WHERE id = '${userId}'`;
@@ -48,8 +59,16 @@ const method = {
     insertLineuser: async function (user) {
         try {
             const dateNow = await dateHelper.DateNow();
-            const sql = `INSERT INTO USER (create_time, firstName, photo, active , type ,Lineuserid)
+            const sql = `INSERT INTO USER (create_time, firstName, photo, active , type ,id)
             VALUES ('${dateNow}', '${user.displayName}', '${user.pictureUrl}',  1, 'line', '${user.userId}')`;
+            await api(sql)
+        } catch (error) {
+            console.log(error)
+        }
+    },
+    updateLineuser: async function (user) {
+        try {
+            const sql = `UPDATE USER set firstName = '${user.displayName}' , photo = '${user.pictureUrl}' WHERE id = '${user.userId}'`
             await api(sql)
         } catch (error) {
             console.log(error)
@@ -57,7 +76,7 @@ const method = {
     },
     findByLineId: async function (userId) {
         try {
-            const sql = `SELECT * FROM USER WHERE Lineuserid = '${userId}' AND type = 'line'`
+            const sql = `SELECT * FROM USER WHERE userid = '${userId}'`
             const data = await api(sql)
         } catch (error) {
             console.log(error)

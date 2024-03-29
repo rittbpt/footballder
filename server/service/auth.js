@@ -12,6 +12,14 @@ const method = {
         }
     },
 
+    updateprofile: async function (userinfo) {
+        try {
+            await authRepo.updateprofile(userinfo);
+        } catch (error) {
+            throw error;
+        }
+    },
+
     insertUser: async function (userinfo) {
         try {
             const count = await authRepo.count()

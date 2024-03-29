@@ -6,4 +6,6 @@ module.exports = function (app) {
     app.post("/Linelogin" , Auth.Linelogin)
     app.post("/changepassword" , Auth.changepassword)
     app.post("/sendotp" , Auth.sendotp)
+    app.post("/updateprofile" , Auth.updateprofile)
+
 }

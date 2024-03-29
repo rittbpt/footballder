@@ -12,6 +12,16 @@ const method = {
         }
     },
 
+    updatestatus: async function (MatchId) {
+        try {
+            const sql = `UPDATE MatchTable set statusMatch = 'full' WHERE id = ${MatchId}`
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     insert: async function (matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate) {
         try {
             const time = await dateHelper.convertdatetimestingDatetime(selectDatetime)
@@ -59,6 +69,15 @@ const method = {
             throw error;
         }
     },
+
+    count: async function (MatchId) {
+        try {
+            const sql = `SELECT amount FROM MatchTable WHERE id = ${MatchId}`
+            return await api(sql)
+        } catch (error) {
+            throw error;
+        }
+    }
 
 
 

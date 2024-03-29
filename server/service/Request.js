@@ -2,6 +2,7 @@ const api = require("../connect/connectMysql");
 const dateHelper = require("../helper/date");
 const requsetRepo = require("../repository/request")
 const locationHelper = require("../helper/locaiton")
+const MatchRepo = require("../repository/Match")
 
 const method = {
     getall: async function (selectedFields) {
@@ -45,6 +46,12 @@ const method = {
             const createtime = await dateHelper.DateNow()
             const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${MatchId}' , '${Position}' , 'wait' , ${userId})`;
             const data = await api(sql);
+            const amount = await MatchRepo.count(MatchId)
+            const countrq = await requsetRepo.rqcountmatch(MatchId)
+            console.log(amount , countrq)
+            if (amount[0].amount + 1 === countrq[0].count ) {
+                await MatchRepo.updatestatus(MatchId)
+            }
             return data;
         } catch (error) {
             console.log(error, "error at service insert")
