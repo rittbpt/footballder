@@ -21,8 +21,8 @@ exports.insert = async (req, res) => {
         req.body.MatchName = matchName
         req.body.userId = userCreate
         req.body.type = 0
-        await reservice.resave(req)
         await chatroomcontroller.insertChatroom(req)
+        await reservice.resave(req)
         res.send({ status: 200, data: data })
     } catch (e) {
         console.log(e.message, "Error at controller Match insert")
