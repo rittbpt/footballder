@@ -51,6 +51,18 @@ const method = {
             throw error;
         }
     },
+    resave: async function (MatchId, userId) {
+        try {
+            const createtime = await dateHelper.DateNow()
+            const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${MatchId}' , 'all' , 'accept' , ${userId})`;
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            console.log(error, "error at service insert")
+            throw error;
+        }
+    },
+
     getRecent: async function (userId) {
         try {
             const data = await requsetRepo.getRecent(userId)

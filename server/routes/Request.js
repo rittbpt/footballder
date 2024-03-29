@@ -7,5 +7,6 @@ module.exports = function (app) {
     app.post("/insertrequest", Checktoken, Request.insert);
     app.get("/getRecent/:userId" , Checktoken , Request.getRecent);
     app.post("/updateRqstatus" , Checktoken , Request.updateRqstatus);
+    app.post("/resava" , Checktoken , Request.updateRqstatus);
     
 }

@@ -33,6 +33,17 @@ exports.insert = async (req, res) => {
     }
 };
 
+exports.resave = async (req, res) => {
+    try {
+        const { MatchId, userId } = req.body
+        const data = await Service.resave(MatchId, userId)
+        res.send({ status: 200, data: data })
+    } catch (e) {
+        console.log(e.message, "Error at controller insert")
+        res.send({ status: 400 });
+    }
+};
+
 exports.getRecent = async (req, res) => {
     try {
         const { userId } = req.params

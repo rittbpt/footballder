@@ -50,7 +50,7 @@ const method = {
             const sql = `SELECT mt.*, rq.*
             FROM Request AS rq 
             LEFT JOIN MatchTable AS mt ON rq.MatchId = mt.id 
-            WHERE rq.userId = '${userId}' AND rq.statusRequest = 'accept'
+            WHERE (rq.userId = '${userId}' AND rq.statusRequest = 'accept') OR mt.userCreate = '${userId}'
             `
 
             const data = await api(sql);

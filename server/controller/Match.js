@@ -1,5 +1,6 @@
 const Service = require("../service/Match");
 const chatroomcontroller = require("../controller/Chatroom")
+const reservice = require('../service/Request')
 
 exports.getall = async (req, res) => {
     try {
@@ -20,6 +21,7 @@ exports.insert = async (req, res) => {
         req.body.MatchName = matchName
         req.body.userId = userCreate
         req.body.type = 0
+        await reservice.resave(req)
         await chatroomcontroller.insertChatroom(req)
         res.send({ status: 200, data: data })
     } catch (e) {
