@@ -73,7 +73,7 @@ async function getdetailone(data) {
     try {
         const result = []
         for (const location of data) {
-            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${location.locationId}&fields=name,opening_hours,photos&key=${config.google_api}`;
+            const url = `https://maps.googleapis.com/maps/api/place/details/json?place_id=${location.locationId}&fields=name,opening_hours,geometry,photos&key=${config.google_api}`;
             const response = await axios.get(url);
             const placeDetails = response.data.result;
             const _ = {}
@@ -89,6 +89,8 @@ async function getdetailone(data) {
             _.Description = !location.Description ? '-' : location.Description
             _.matchName = location.matchName
             _.MatchId = location.MatchId
+            _.lat = placeDetails.geometry.location.lat
+            _.lng = placeDetails.geometry.location.lng
             result.push(_)
         }
         return result;
