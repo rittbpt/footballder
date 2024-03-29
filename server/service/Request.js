@@ -15,13 +15,25 @@ const method = {
         }
     },
 
+    getuserre: async function (requestID) {
+        try {
+            const sql = `SELECT userId , MatchId FROM Request WHERE id = '${requestID}'`;
+            const data = await api(sql);
+            return data[0];
+        } catch (error) {
+            console.log(error, "error at service getall")
+            throw error;
+        }
+    },
+
+
     getbyId: async function (userId) {
         try {
             const data = await requsetRepo.getbyId(userId)
             const data_ = await requsetRepo.getbyme(userId)
             const __ = await locationHelper.getdetailrq(data_)
             const _ = await locationHelper.getdetailrq(data)
-            return { request: __, myrequest : _ };
+            return { request: __, myrequest: _ };
         } catch (error) {
             console.log(error, "error at service getbyId")
             throw error;

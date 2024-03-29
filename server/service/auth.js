@@ -12,9 +12,12 @@ const method = {
         }
     },
 
-    insertUser: async function (email, password, firstName, lastName, phoneNumber, birthDay) {
+    insertUser: async function (userinfo) {
         try {
-            await authRepo.insertUser(email, password, firstName, lastName, phoneNumber, birthDay)
+            const count = await authRepo.count()
+            userinfo.id = count[0].count
+            console.log(count)
+            await authRepo.insertUser(userinfo)
         } catch (error) {
             console.log(error)
         }

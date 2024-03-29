@@ -16,7 +16,16 @@ const method = {
     },
     getinfo: async function (userId) {
         try {
-            const sql = `SELECT photo,firstName FROM USER WHERE id = ${userId}`;
+            const sql = `SELECT photo,firstName FROM USER WHERE id = '${userId}'`;
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+    count: async function () {
+        try {
+            const sql = `SELECT COUNT(*) AS count FROM USER WHERE type = 'footballder'`;
             const data = await api(sql);
             return data;
         } catch (error) {
@@ -25,10 +34,12 @@ const method = {
     },
     insertUser: async function (user) {
         try {
+            console.log(user)
             const encryptPassword = await AuthHelper.encryptPassword(user.password);
             const dateNow = await dateHelper.DateNow();
-            const sql = `INSERT INTO USER (email, password, create_time, firstName, lastName, phoneNumber, birthDay, active , type)
-            VALUES ('${user.email}', '${encryptPassword}', '${dateNow}', '${user.firstName}', '${user.lastName}', '${user.phoneNumber}', '${user.birthDay}', 1 , 'footballder')`;
+            const sql = `INSERT INTO USER (id ,email, password, create_time, firstName, lastName, phoneNumber, birthDay, active , type)
+            VALUES ('${user.id}' ,'${user.email}', '${encryptPassword}', '${dateNow}', '${user.firstName}', '${user.lastName}', '${user.phoneNumber}', '${user.birthDay}', 1 , 'footballder')`;
+            console.log(sql)
             await api(sql)
         } catch (error) {
             console.log(error)

@@ -24,7 +24,7 @@ const method = {
     },
     chats: async function (userId) {
         try {
-            const sql = `SELECT c.readed ,cr.* FROM Chatroom AS cr JOIN Chat AS c ON c.chatId = cr.ChatID WHERE c.userId = ${userId}`
+            const sql = `SELECT c.readed ,cr.* FROM Chatroom AS cr JOIN Chat AS c ON c.chatId = cr.ChatID WHERE c.userId = '${userId}'`
             const chats = await api(sql)
             return chats
         } catch (e) {
