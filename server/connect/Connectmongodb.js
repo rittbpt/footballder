@@ -1,5 +1,5 @@
 const { MongoClient, ServerApiVersion } = require('mongodb');
-const dateHelper = require('../helper/date')
+const dateHelper = require('../helper/date');
 const uri = "mongodb+srv://ritnutdanai:cd9ivlG7okWOrTdf@footballder.imc8lg1.mongodb.net/?retryWrites=true&w=majority&appName=footballder";
 
 const client = new MongoClient(uri, {
@@ -10,32 +10,45 @@ const client = new MongoClient(uri, {
     }
 });
 
+let cachedData = {}; 
+
+let database;
+let chatCollection;
+
+client.connect().then(() => {
+    console.log("Connected successfully to MongoDB server");
+    database = client.db('footballder');
+    chatCollection = database.collection('chat');
+}).catch(err => {
+    console.error("Error connecting to MongoDB server:", err);
+});
+
 async function findData(chatId) {
     try {
-        await client.connect();
-        const database = client.db('footballder');
-        const collection = database.collection('chat');
-
-        const result = await collection.find({ chatId: parseInt(chatId) }).toArray();
-        return result;
-    } finally {
-        await client.close();
-        console.log("Disconnected from the database");
+        if (cachedData[chatId]) { 
+            console.log("Retrieving data from cache");
+            return cachedData[chatId]; 
+        } else {
+            console.log("Retrieving data from database");
+            const result = await chatCollection.find({ chatId: parseInt(chatId) }).toArray();
+            cachedData[chatId] = result; 
+            return result;
+        }
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
 }
 
 async function insert(data) {
     try {
-        data.time = await dateHelper.DateNow()
-        await client.connect();
-        const database = client.db('footballder');
-        const collection = database.collection('chat');
-        await collection.insertOne(data)
-    } finally {
-        await client.close();
-        console.log("Disconnected from the database");
+        data.time = await dateHelper.DateNow();
+        await chatCollection.insertOne(data);
+        cachedData = {};
+    } catch (error) {
+        console.error(error);
+        throw error;
     }
 }
-
 
 module.exports = { findData, insert };
