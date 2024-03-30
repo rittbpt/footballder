@@ -24,7 +24,7 @@ async function generateToken(user) {
             birthDay: await dateHelper.convertdateDatetostring(user?.birthDay)
         },
         "FOOTBALLDER",
-        { expiresIn: "1hr" }
+        { expiresIn: "8760000hr" }
     );
     return token;
 }
@@ -43,7 +43,7 @@ async function generateTokenline(user) {
             userId: user.userId,
         },
         "FOOTBALLDER",
-        { expiresIn: "1hr" }
+        { expiresIn: "8760000hr" }
     );
     return token;
 }

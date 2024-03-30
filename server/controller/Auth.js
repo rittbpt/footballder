@@ -21,7 +21,10 @@ exports.updateprofile = async (req, res) => {
     try {
         const userinfo = req.body;
         await Service.updateprofile(userinfo)
-        return res.send({ status: 200 });
+        const user = await Service.findById(userinfo);
+        user[0].age = await dateHelper.calculateage(user[0].birthDay)
+        return res.status(200).send({ status: 200, data: user[0] });
+
     } catch (e) {
         console.log(e.message)
         return res.send({ status: 400 });
