@@ -33,6 +33,7 @@ const method = {
     findByLineId: async function (user) {
         try {
             const data = await authRepo.findByLineId(user.userId);
+            console.log(data)
             let userinfo;
             if (!data.length) {
                 await authRepo.insertLineuser(user)

@@ -76,8 +76,9 @@ const method = {
     },
     findByLineId: async function (userId) {
         try {
-            const sql = `SELECT * FROM USER WHERE userid = '${userId}'`
+            const sql = `SELECT * FROM USER WHERE id = '${userId}'`
             const data = await api(sql)
+            return data
         } catch (error) {
             console.log(error)
         }
