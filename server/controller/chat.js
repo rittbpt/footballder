@@ -20,7 +20,7 @@ exports.insertchat = async (req, res) => {
     },
     exports.readchat = async (req, res) => {
         try {
-            const { chatId, userId } = req.query
+            const { chatId, userId } = req.body
             const result = await chatService.readchat(chatId, userId)
             res.send({ status: 200, data: result })
         } catch (e) {
