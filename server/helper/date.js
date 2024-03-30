@@ -29,13 +29,14 @@ async function changetotime(date) {
 }
 
 
-async function checkdate(date) {
+async function checkdate(date_) {
+    const date = moment(date_).format('YYYY-MM-DD HH:mm:ss')
     const date_now = moment().format('DD/MM/YYYY')
     const isMonth = moment().format('MM/YYYY')
     if (date_now === await convertdateDatetostring(date)) {
         return date.split(' ')[1].slice(0,5)
-    } else if ((isMonth === moment().format('MM/YYYY')) || (moment().format('YYYY') === moment().format('YYYY'))) {
-        return moment(date).format('MM/YY')
+    } else if ((isMonth === moment(date).format('MM/YYYY')) || (moment().format('YYYY') === moment(date).format('YYYY'))) {
+        return moment(date).format('DD/MM')
     } else {
         return await convertdateDatetostring(date)
     }

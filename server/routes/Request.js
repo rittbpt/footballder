@@ -8,5 +8,5 @@ module.exports = function (app) {
     app.get("/getRecent/:userId" , Checktoken , Request.getRecent);
     app.post("/updateRqstatus" , Checktoken , Request.updateRqstatus);
     app.post("/resava" , Checktoken , Request.updateRqstatus);
-    
+    app.post("/checkin" , Checktoken , Request.checkin);
 }

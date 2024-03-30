@@ -34,7 +34,7 @@ const method = {
                 _.firstName = user[0].firstName
                 _.data = element.data
                 _.date = element.time.split(' ')[0]
-                _.time = await dateHelper.checkdate(element.time)
+                _.time = element.time.split(' ')[1].slice(0,5)
 
                 result.push(_)
             }

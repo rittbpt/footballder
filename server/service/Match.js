@@ -39,7 +39,8 @@ const method = {
     },
     getmatchdone: async function (userId) {
         try {
-            const data = await MatchRepo.getmatchdone(userId)
+            const data_ = await MatchRepo.getmatchdone(userId)
+            const data = data_.filter((element) => element.checkIn === null && element.userId === userId)
             const _ = await locationHelper.getdetailone(data)
             const result = []
             const had = []

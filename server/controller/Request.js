@@ -22,6 +22,17 @@ exports.getbyId = async (req, res) => {
     }
 };
 
+exports.checkin = async (req, res) => {
+    try {
+        const { userId, MatchId } = req.body
+        await Service.checkin(userId, MatchId)
+        res.send({ status: 200 })
+    } catch (e) {
+        console.log(e.message, "Error at controller getbyId")
+        res.send({ status: 400 });
+    }
+};
+
 exports.insert = async (req, res) => {
     try {
         const { MatchId, Position, userId } = req.body

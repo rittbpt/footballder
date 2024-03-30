@@ -16,6 +16,17 @@ const method = {
         }
     },
 
+    checkin: async function (userId , MatchId) {
+        try {
+            const sql = `UPDATE Request set checkIn = 1 WHERE userId = '${userId}' AND MatchId = ${MatchId}`;
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            console.log(error, "error at service getall")
+            throw error;
+        }
+    },
+
     getuserre: async function (requestID) {
         try {
             const sql = `SELECT userId , MatchId FROM Request WHERE id = '${requestID}'`;
