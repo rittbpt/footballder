@@ -4,7 +4,7 @@ const dateHelper = require("../helper/date")
 const method = {
     getall: async function (userId) {
         try {
-            const sql = `SELECT * , id as MatchId FROM MatchTable WHERE userCreate != ${userId} AND statusMatch = 'wait'`
+            const sql = `SELECT * , id as MatchId FROM MatchTable WHERE userCreate != '${userId}' AND statusMatch = 'wait'`
             const data = await api(sql);
             return data;
         } catch (error) {
