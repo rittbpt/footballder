@@ -1,7 +1,7 @@
 
 const { email } = require("../config");
 const authRepo = require("../repository/auth")
-const { randomUUID } = require('crypto');
+const AuthHelper = require("../helper/Auth")
 
 const method = {
     findById: async function (userinfo, selectedFields) {
@@ -23,9 +23,7 @@ const method = {
 
     insertUser: async function (userinfo) {
         try {
-            const count = await authRepo.count()
-            userinfo.id = randomUUID()
-            console.log(count)
+            userinfo.id = await AuthHelper.generateUniqueIds()
             await authRepo.insertUser(userinfo)
         } catch (error) {
             console.log(error)

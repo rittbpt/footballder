@@ -45,7 +45,6 @@ const method = {
     },
     insertUser: async function (user) {
         try {
-            console.log(user)
             const encryptPassword = await AuthHelper.encryptPassword(user.password);
             const dateNow = await dateHelper.DateNow();
             const sql = `INSERT INTO USER (id ,email, password, create_time, firstName, lastName, phoneNumber, birthDay, active , type)

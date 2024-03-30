@@ -55,6 +55,7 @@ exports.insertChatroom = async (req, res) => {
             obj.MatchId = -1
             obj.MatchName = "chat-friend"
             const chatroomId = await chatroomService.insert(obj)
+            console.log(chatroomId.insertId)
             await chatService.insert({ userId: userId, chatroomId: chatroomId.insertId })
             await chatService.insert({ userId: friendId, chatroomId: chatroomId.insertId })
             res.send({ status: 200 })

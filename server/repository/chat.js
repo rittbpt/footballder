@@ -5,7 +5,8 @@ const method = {
 
     insert: async function (data) {
         try {
-            const sql = `INSERT INTO Chat (userId , chatId , readed ) VALUES (${data.userId} ,${data.chatroomId} , 0 )`
+            console.log(data)
+            const sql = `INSERT INTO Chat (userId , chatId , readed ) VALUES ('${data.userId}' ,${data.chatroomId} , 0 )`
             console.log(sql)
             const chatId = await api(sql)
             return chatId
