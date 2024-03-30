@@ -31,7 +31,7 @@ const method = {
             throw e;
         }
     },
-    readchat: async function (userId, chatId) {
+    readchat: async function (chatId, userId) {
         try {
             const sql = `UPDATE Chat SET readed = 0 WHERE userId = '${userId}' AND chatId = ${chatId}`
             await api(sql)

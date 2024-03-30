@@ -44,9 +44,9 @@ const method = {
             throw e;
         }
     },
-    readchat: async function (userId, chatId) {
+    readchat: async function (chatId, userId) {
         try {
-            await chatRepo.readchat(userId, chatId)
+            await chatRepo.readchat(chatId, userId)
         } catch (e) {
             throw e;
         }
