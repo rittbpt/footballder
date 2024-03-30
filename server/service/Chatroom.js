@@ -34,11 +34,13 @@ const method = {
     chats: async function (userId) {
         try {
             const chats = await chatroomRepo.chats(userId)
+            console.log(chats)
             const result = []
             for (const chat of chats) {
                 const _ = {}
                 if (chat.type) {
                     const userinfo = await chatroomRepo.privatechat(userId, chat.ChatID)
+                    console.log(userinfo)
                     _.name = userinfo[0].firstName
                     _.photo = userinfo[0].photo
                     _.message = chat.message
