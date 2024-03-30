@@ -33,15 +33,14 @@ const method = {
     findByLineId: async function (user) {
         try {
             const data = await authRepo.findByLineId(user.userId);
-            console.log(data)
-            let userinfo;
             if (!data.length) {
                 await authRepo.insertLineuser(user)
-                userinfo = await authRepo.getuserline(user)
             } else {
-                await authRepo.update(user)
-                userinfo = await authRepo.getuserline(user)
+
+                await authRepo.updateLineuser(user)
             }
+            const userinfo = await authRepo.getuserline(user)
+            console.log(userinfo)
             return userinfo;
         } catch (error) {
             throw error;

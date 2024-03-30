@@ -116,7 +116,7 @@ async function getdetailrq(data) {
             _.matchName = location.matchName
             _.position = location.Position
             _.firstName = location.firstName
-            _.age = await dateHelper.calculateage(location.birthDay)
+            _.age = !location.birthDay ? '-' : await dateHelper.calculateage(location.birthDay)
             _.MatchId = location.MatchId
             _.rqId = location.rqId
             _.photo = location.photo

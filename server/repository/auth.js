@@ -85,7 +85,7 @@ const method = {
     },
     getuserline: async function (user) {
         try {
-            const sql = `SELECT * FROM USER WHERE Lineuserid = '${user.userId}' AND type = 'line'`;
+            const sql = `SELECT * FROM USER WHERE id = '${user.userId}' AND type = 'line'`;
             const data = await api(sql);
             return data;
         } catch (error) {
