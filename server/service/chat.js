@@ -1,6 +1,7 @@
 const chatRepo = require("../repository/chat")
 const chatroomRepo = require("../repository/Chatroom")
 const userRepo = require("../repository/auth")
+const dateHelper = require('../helper/date')
 
 const method = {
     insert: async function (data) {
@@ -33,7 +34,7 @@ const method = {
                 _.firstName = user[0].firstName
                 _.data = element.data
                 _.date = element.time.split(' ')[0]
-                _.time = element.time.split(' ')[1].slice(0,5)
+                _.time = await dateHelper.checkdate(element.time)
 
                 result.push(_)
             }

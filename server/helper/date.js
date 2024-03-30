@@ -28,6 +28,20 @@ async function changetotime(date) {
     return moment(date, 'YYYY-MM-DD HH:mm:ss').format('HH:mm');
 }
 
+
+async function checkdate(date) {
+    const date_now = moment().format('DD/MM/YYYY')
+    const isMonth = moment().format('MM/YYYY')
+    if (date_now === await convertdateDatetostring(date)) {
+        return date.split(' ')[1].slice(0,5)
+    } else if ((isMonth === moment().format('MM/YYYY')) || (moment().format('YYYY') === moment().format('YYYY'))) {
+        return moment(date).format('MM/YY')
+    } else {
+        return await convertdateDatetostring(date)
+    }
+}
+
+
 async function calculateage(date) {
     const birthday = moment(date);
     const now = moment();
@@ -43,5 +57,6 @@ module.exports = {
     textday,
     changetotime,
     calculateage,
-    DateNow_
+    DateNow_ ,
+    checkdate
 };
