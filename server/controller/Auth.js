@@ -1,5 +1,6 @@
 const AuthHelper = require("../helper/Auth")
 const Service = require("../service/auth")
+const dateHelper = require("../helper/date")
 
 exports.Register = async (req, res) => {
     try {
@@ -45,6 +46,8 @@ exports.Login = async (req, res) => {
         }
 
         const token = await AuthHelper.generateToken(user[0]);
+
+        user[0].age = await dateHelper.calculateage(user[0].birthDay)
 
         return res.status(200).send({ status: 200, token: token, data: user[0] });
     } catch (e) {
