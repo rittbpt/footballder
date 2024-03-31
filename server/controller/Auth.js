@@ -64,6 +64,8 @@ exports.Linelogin = async (req, res) => {
         const userinfo = req.body
         const user = await Service.findByLineId(userinfo);
         const token = await AuthHelper.generateTokenline(userinfo);
+        user[0].age = await dateHelper.calculateage(user[0].birthDay)
+
         return res.status(200).send({ status: 200, token: token, data: user[0] });
     } catch (e) {
         console.error(e.message);

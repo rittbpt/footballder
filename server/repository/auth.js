@@ -27,8 +27,10 @@ const method = {
 
     getinfo: async function (userId) {
         try {
+            console.log(userId)
             const sql = `SELECT photo,firstName FROM USER WHERE id = '${userId}'`;
             const data = await api(sql);
+            console.log(data)
             return data;
         } catch (error) {
             throw error;
