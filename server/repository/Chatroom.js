@@ -4,7 +4,8 @@ const dateHelper = require("../helper/date")
 const method = {
     insert: async function (data) {
         try {
-            const sql = `INSERT INTO Chatroom (Chatname , type , MatchId ) VALUES ('${data.MatchName}' , '${data.type}'  , ${data.MatchId})`
+            const now = await dateHelper.DateNow()
+            const sql = `INSERT INTO Chatroom (Chatname , type , MatchId ,time ) VALUES ('${data.MatchName}' , '${data.type}'  , ${data.MatchId}, '${now}' )`
             const chatId = await api(sql)
             return chatId
         } catch (e) {
@@ -32,7 +33,7 @@ const method = {
             throw e;
         }
     },
-    newchatmessage: async function (chatId , data) {
+    newchatmessage: async function (chatId, data) {
         try {
             const time = await dateHelper.DateNow()
             const sql = `UPDATE Chatroom SET time = '${time}' , message = '${data}' WHERE ChatID = ${chatId}`
@@ -43,7 +44,7 @@ const method = {
             throw e;
         }
     },
-    privatechat: async function (userId , chatId) {
+    privatechat: async function (userId, chatId) {
         try {
             const sql = `SELECT u.* , c.readed FROM Chat AS c JOIN USER AS u ON u.id = c.userId WHERE c.userId != '${userId}' AND c.chatId = '${chatId}'`
             const userinfo = await api(sql)
