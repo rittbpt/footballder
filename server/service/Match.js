@@ -1,6 +1,7 @@
 const MatchRepo = require("../repository/Match")
 const locationHelper = require("../helper/locaiton")
 const reRepo = require("../repository/request")
+const chatr = require("../repository/Chatroom")
 
 
 const method = {
@@ -44,12 +45,14 @@ const method = {
             const _ = await locationHelper.getdetailone(data)
             const result = []
             const had = []
-            _.forEach((element) => {
+            for (const element of _) {
                 if (!had.includes(element.MatchId)) {
+                    const chatid = await chatr.getchatIdbymatch(element.MatchId)
+                    element.chatId = chatid
                     result.push(element)
                     had.push(element.MatchId)
                 }
-            })
+            }
             return result;
         } catch (error) {
             throw error;

@@ -13,9 +13,20 @@ const method = {
         }
 
     },
-    getchatId: async function (userId ,friendId) {
+    getchatId: async function (userId, friendId) {
         try {
             const sql = `SELECT ChatID FROM Chatroom WHERE uesrId = '${userId}' AND friendId = '${friendId}'`
+            const chatId = await api(sql)
+            return chatId[0].ChatID
+        } catch (e) {
+            throw e;
+        }
+
+    },
+
+    getchatIdbymatch: async function (MatchId) {
+        try {
+            const sql = `SELECT ChatID FROM Chatroom WHERE MatchId = ${MatchId}`
             const chatId = await api(sql)
             return chatId[0].ChatID
         } catch (e) {
