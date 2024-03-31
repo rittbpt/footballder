@@ -72,8 +72,9 @@ const method = {
     resave: async function (req) {
         try {
             const createtime = await dateHelper.DateNow()
-            const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${req.body.MatchId}' , 'all' , 'accept' , ${req.body.userId})`;
+            const sql = `INSERT INTO Request (createTime , MatchId , Position, statusRequest , userId) VALUES ('${createtime}' , '${req.body.MatchId}' , 'all' , 'accept' , '${req.body.userId}')`;
             const data = await api(sql);
+            console.log(data)
             return data;
         } catch (error) {
             console.log(error, "error at service insert")
