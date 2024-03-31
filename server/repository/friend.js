@@ -39,7 +39,6 @@ const method = {
     },
     getfriends: async function (userId) {
         try {
-            console.log(userId)
             const sql = `SELECT 
             u.firstName , 
             u.photo ,
@@ -54,7 +53,6 @@ const method = {
         WHERE 
             friend.status = 'friend'`
             const data = await api(sql)
-            console.log(data)
             return data
         } catch (e) {
             throw e;

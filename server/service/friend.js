@@ -1,10 +1,21 @@
 const friendRepo = require('../repository/friend')
+const chatr = require('../repository/Chatroom')
 
 const method = {
     getfriends: async function (userId) {
         try {
             const data = await friendRepo.getfriends(userId)
-            return data
+            const result = []
+            for (const i of data) {
+                const chatId = await chatr.getchatId(userId, i.id)
+                const _ = {}
+                _.chatId = chatId
+                _.firstName = i.firstName
+                _.firstName = i.firstName
+                _.photo = i.photo
+                result.push(_)
+            }
+            return result
         } catch (error) {
             console.error('Error fetching data:', error);
         }

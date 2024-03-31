@@ -5,9 +5,19 @@ const method = {
     insert: async function (data) {
         try {
             const now = await dateHelper.DateNow()
-            const sql = `INSERT INTO Chatroom (Chatname , type , MatchId ,time ) VALUES ('${data.MatchName}' , '${data.type}'  , ${data.MatchId}, '${now}' )`
+            const sql = `INSERT INTO Chatroom (Chatname , type , MatchId ,time ,uesrId , friendId ) VALUES ('${data.MatchName}' , '${data.type}'  , ${data.MatchId}, '${now}', '${data.userId}', '${data.friendId}' )`
             const chatId = await api(sql)
             return chatId
+        } catch (e) {
+            throw e;
+        }
+
+    },
+    getchatId: async function (userId ,friendId) {
+        try {
+            const sql = `SELECT ChatID FROM Chatroom WHERE uesrId = '${userId}' AND friendId = '${friendId}'`
+            const chatId = await api(sql)
+            return chatId[0].ChatID
         } catch (e) {
             throw e;
         }
