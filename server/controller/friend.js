@@ -1,5 +1,6 @@
 const friendService = require('../service/friend')
 const authRepo = require('../repository/auth')
+const chatroomcontroller = require('../controller/Chatroom')
 
 exports.getfriends = async (req, res) => {
     try {
@@ -17,10 +18,15 @@ exports.insert = async (req, res) => {
         const { userId, friendId } = req.body
         const check = await authRepo.getinfo(friendId)
         if (!check.length) {
-            res.send({ status: 400, data: "not have user" })
+            return res.send({ status: 400, data: "not have user" })
         } else {
             const data = await friendService.insert(userId, friendId)
-            res.send({ status: 200, data: data.length === 0 ? "Already friend" : "Add friend success" })
+            if (data) {
+                await chatroomcontroller.InsertPrivateChatroom(req,res)
+                return res.send({ status: 200, data: "Add friend success" })
+            } else {
+                return res.send({ status: 200, data: "Already friend" })
+            }
         }
     } catch (e) {
         console.log(e.message)

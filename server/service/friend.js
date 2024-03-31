@@ -12,9 +12,10 @@ const method = {
     insert: async function (userId, friendId) {
         try {
             const check = await friendRepo.isFriend(userId, friendId)
-            let data = []
+            let data = false
             if (!check.length) {
-                data = await friendRepo.insert(userId, friendId)
+                await friendRepo.insert(userId, friendId)
+                data = true
             }
             return data
         } catch (error) {
