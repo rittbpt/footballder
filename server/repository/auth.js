@@ -58,8 +58,8 @@ const method = {
     insertLineuser: async function (user) {
         try {
             const dateNow = await dateHelper.DateNow();
-            const sql = `INSERT INTO USER (create_time, firstName, photo, active , type ,id)
-            VALUES ('${dateNow}', '${user.displayName}', '${user.pictureUrl}',  1, 'line', '${user.userId}')`;
+            const sql = `INSERT INTO USER (create_time, firstName, photo, active , type ,id ,birthDay)
+            VALUES ('${dateNow}', '${user.displayName}', '${user.pictureUrl}',  1, 'line', '${user.userId}' ,'${dateNow}')`;
             await api(sql)
         } catch (error) {
             console.log(error)
