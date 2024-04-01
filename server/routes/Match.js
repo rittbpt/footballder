@@ -5,7 +5,6 @@ module.exports = function (app) {
     app.get("/getallmatch/:userId", Checktoken, Match.getall);
     app.post("/insertmatch", Checktoken, Match.insert);
     app.get("/getmatchdone/:userId", Checktoken, Match.getmatchdone);
+    app.get("/getmatchuserjoin/:MatchId", Checktoken, Match.getmatchuserjoin);
 
-
-    
 }

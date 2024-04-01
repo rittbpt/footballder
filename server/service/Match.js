@@ -30,6 +30,14 @@ const method = {
             throw error;
         }
     },
+    getmatchuserjoin: async function (MatchId) {
+        try {
+            const data = await MatchRepo.getmatchuserjoin(MatchId)
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
     insert: async function (matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate) {
         try {
             const data = await MatchRepo.insert(matchName, locationId, selectDatetime, amount, Description, statusMatch, userCreate)
@@ -48,6 +56,8 @@ const method = {
             for (const element of _) {
                 if (!had.includes(element.MatchId)) {
                     const chatid = await chatr.getchatIdbymatch(element.MatchId)
+                    const count = await MatchRepo.getmatchuserjoin(element.MatchId)
+                    element.count = count.length
                     element.chatId = chatid
                     result.push(element)
                     had.push(element.MatchId)

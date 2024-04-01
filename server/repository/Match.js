@@ -12,6 +12,17 @@ const method = {
         }
     },
 
+    getmatchuserjoin: async function (MatchId) {
+        try {
+            console.log(MatchId)
+            const sql = `SELECT userId FROM Request WHERE statusRequest = 'accept' AND MatchId = '${MatchId}'`
+            const data = await api(sql);
+            return data;
+        } catch (error) {
+            throw error;
+        }
+    },
+
     getinfo: async function (MatchId) {
         try {
             const sql = `SELECT * FROM MatchTable WHERE id = ${MatchId}`
@@ -70,7 +81,7 @@ const method = {
             const sql = `SELECT mt.*, rq.*
             FROM Request AS rq 
             LEFT JOIN MatchTable AS mt ON rq.MatchId = mt.id 
-            WHERE ((rq.userId = '${userId}' AND rq.statusRequest = 'accept') OR mt.userCreate = '${userId}') 
+            WHERE ((rq.userId = '${userId}' AND rq.statusRequest = 'accept') OR mt.userCreate = '${userId}') AND mt.statusMatch = 'wait' 
             `
 
             const data = await api(sql);
