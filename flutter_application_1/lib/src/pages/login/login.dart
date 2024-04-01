@@ -32,7 +32,7 @@ class _LoginPageState extends State<LoginPage> {
   void initState() {
     lineSDKInit();
     super.initState();
-    _usernameController.text = "admin";
+    _usernameController.text = "";
   }
 
   @override
@@ -221,7 +221,7 @@ class _LoginPageState extends State<LoginPage> {
                             Container(
                               width: double.infinity,
                               child: ElevatedButton(
-                                onPressed: handleLineSignIn,
+                                onPressed: () => _handleLineSignIn(context),
                                 style: ButtonStyle(
                                   backgroundColor:
                                       MaterialStateProperty.all<Color>(
@@ -307,7 +307,7 @@ class _LoginPageState extends State<LoginPage> {
 
       // // Extract token from the response
       String? token = response.token;
-      print("kuyken ${response.token}");
+      print("login ${response.token}");
 
       if (token != null) {
         // Token obtained, store it securely (e.g., using shared_preferences)
@@ -330,23 +330,49 @@ class _LoginPageState extends State<LoginPage> {
     }
   }
 
-  void handleLineSignIn() async {
+  void _handleLineSignIn(BuildContext context) async {
     try {
       final result = await LineSDK.instance.login();
+      String apiUrl = 'http://localhost:3099/Linelogin';
 
       var displayName = result.userProfile?.displayName;
       var userId = result.userProfile?.userId;
       var imageUrl = result.userProfile?.pictureUrl;
 
-      print(result.userProfile?.data);
+      Map<String, dynamic> requestBody = {
+        'displayName': displayName,
+        'userId': userId,
+        'pictureUrl': imageUrl,
+      };
 
-      Navigator.push(
-        context,
-        MaterialPageRoute(
-          builder: (context) => NavigatorPage(
-              userId: userId, displayName: displayName, imageUrl: imageUrl),
-        ),
-      );
+      var response = await postloginApi(apiUrl, requestBody);
+      String? token = response.token;
+      print("linelogin ${response.token}");
+
+      if (token != null) {
+        // Token obtained, store it securely (e.g., using shared_preferences)
+        // You can now navigate to the home screen or perform other actions
+        Navigator.pushReplacement(
+          context,
+          MaterialPageRoute(builder: (context) => NavigatorPage()),
+        );
+      } else {
+        // No token obtained, handle the error (e.g., show error message)
+      }
+
+      // Handle the API response
+
+      print(displayName);
+      print(userId);
+      print(imageUrl);
+
+      // Navigator.push(
+      //   context,
+      //   MaterialPageRoute(
+      //     builder: (context) => NavigatorPage(
+      //         userId: userId, displayName: displayName, imageUrl: imageUrl),
+      //   ),
+      // );
     } on PlatformException catch (e) {
       print("Error during Line sign-in");
       print(e);

@@ -1,5 +1,29 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/src/pages/profile/friendBox.dart';
+import 'package:flutter_application_1/src/pages/api_service.dart';
+
+class FriendInfo {
+  final String firstName;
+  final String photo;
+  final String friendId;
+  final int chatId;
+
+  FriendInfo({
+    required this.firstName,
+    required this.photo,
+    required this.friendId,
+    required this.chatId,
+  });
+
+  factory FriendInfo.fromJson(Map<String, dynamic> json) {
+    return FriendInfo(
+      firstName: json['firstName'] ?? '', // Update with the correct key
+      photo: json['photo'] ?? '', // Update with the correct key
+      friendId: json['id'] ?? '',
+      chatId: json['chatId'] != null ? int.tryParse(json['chatId'].toString()) ?? 0 : 0,
+    );
+  }
+}
 
 class FriendPage extends StatefulWidget {
   @override
@@ -8,66 +32,78 @@ class FriendPage extends StatefulWidget {
 
 class FriendPageState extends State<FriendPage> {
   TextEditingController SearchController = TextEditingController();
-  List<FriendBox> allChats = []; // List of all chats
-  List<FriendBox> filteredChats = [];
+  List<FriendInfo> allChats = []; // List of all chats
+  List<FriendInfo> filteredChats = [];
+  Future<List<FriendInfo>>? futureFriendList;
+
 
   @override
   void initState() {
     super.initState();
-    // Initialize your chat data
-    allChats = [
-      FriendBox(
-        name: 'Johny',
-        avatarUrl: 'https://via.placeholder.com/150',
-      ),
-      FriendBox(
-        name: 'John',
-        avatarUrl: 'https://via.placeholder.com/150',
-      ),
-      FriendBox(
-        name: 'max',
-        avatarUrl: 'https://via.placeholder.com/150',
-      ),
-      FriendBox(
-        name: 'pp',
-        avatarUrl: 'https://via.placeholder.com/150',
-      ),
-      FriendBox(
-        name: 'steve',
-        avatarUrl: 'https://via.placeholder.com/150',
-      ),
-      // Add more chat data here
-    ];
-    // Initially, set filteredChats to allChats
-    filteredChats.addAll(allChats);
+    fetchFriendList();
   }
 
-  void addFriend(String friendName) {
+  void refreshData() {
     setState(() {
-      allChats.add(
-        FriendBox(
-          name: friendName,
-          avatarUrl: 'https://via.placeholder.com/150',
-        ),
-      );
-      filteredChats.add(
-        FriendBox(
-          name: friendName,
-          avatarUrl: 'https://via.placeholder.com/150',
-        ),
-      );
+      fetchFriendList();
     });
   }
 
+  void fetchFriendList() async {
+    try {
+      List<FriendInfo> friendList = await fetchData();
+      setState(() {
+        allChats = friendList;
+        filteredChats = List.from(allChats);
+        futureFriendList = Future.value(friendList); // Initialize filteredChats with allChats
+      });
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
+  }
+
+  Future<List<FriendInfo>> fetchData() async {
+    List<FriendInfo> FriendList = [];
+    String userId = globalApiResponse!.userData!['id'];
+    String apiUrl = 'http://localhost:3099/friends/${userId}';
+
+    try {
+      final response = await getApi(apiUrl);
+
+      if (response.statusCode == 200) {
+        // Parse the response data
+        Map<String, dynamic> responseData = response.data;
+        print(responseData);
+        print("responseData");
+
+        if (responseData.containsKey('data')) {
+          List<dynamic> requestJsonList = responseData['data'];
+
+          // Create StadiumInfo objects from the fetched data
+          FriendList = requestJsonList
+              .map((json) => FriendInfo.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Data format is incorrect');
+        }
+      } else {
+        throw Exception('Failed to fetch data');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+    print(FriendList);
+
+    return FriendList;
+  }
+
+
+
+
   void filterChats(String query) {
     setState(() {
-      filteredChats.clear();
-      if (query.isNotEmpty) {
-        filteredChats.addAll(allChats.where(
-            (chat) => chat.name.toLowerCase().contains(query.toLowerCase())));
-      } else {
-        filteredChats.addAll(allChats);
-      }
+      // filteredChats.clear();
+      filteredChats = allChats.where((friend) => friend.firstName.toLowerCase().contains(query.toLowerCase())).toList();
     });
   }
 
@@ -94,7 +130,7 @@ class FriendPageState extends State<FriendPage> {
                       title: Text('Add friend'),
                       content: TextField(
                         decoration: InputDecoration(
-                          hintText: 'Enter friend name',
+                          hintText: 'Enter your friend ID',
                         ),
                         onChanged: (value) {
                         newFriendName = value;
@@ -104,8 +140,8 @@ class FriendPageState extends State<FriendPage> {
                         TextButton(
                           onPressed: () {
                             // Add logic to save friend's name
-                            addFriend(newFriendName); 
-                            Navigator.of(context).pop();
+                            // addFriend(newFriendName); 
+                            _onAddFriendPressed(newFriendName);
                           },
                           child: Text('Add'),
                           style: TextButton.styleFrom(
@@ -135,13 +171,44 @@ class FriendPageState extends State<FriendPage> {
         children: [
           buildSearchBox(SearchController, 20),
           SizedBox(height: 10),
-          Expanded(
-            child: ListView.builder(
-              itemCount: filteredChats.length,
-              itemBuilder: (context, index) {
-                return filteredChats[index];
-              },
-            ),
+          FutureBuilder<List<FriendInfo>>(
+            future: futureFriendList,
+            builder: (context, snapshot) {
+              if (snapshot.connectionState == ConnectionState.waiting || futureFriendList == null) {
+                // Display a loading indicator while waiting for data
+                return Container(
+                  alignment:
+                      Alignment.center, // Center the CircularProgressIndicator
+                  margin: EdgeInsets.only(top: 20), // Add margin from the top
+                  child: CircularProgressIndicator(
+                    color: Color(0xFF146001),
+                  ),
+                );
+              } else if (snapshot.hasError) {
+                // Handle error state
+                return Text('Error fetching data');
+              } else {
+                // Data has been successfully fetched, display it
+                // List<ChatroomInfo> matchList = snapshot.data!;
+                return ListView.builder(
+                  shrinkWrap: true,
+                  physics: NeverScrollableScrollPhysics(),
+                  itemCount: filteredChats.length,
+                  itemBuilder: (context, index) {
+                    FriendInfo friend = filteredChats[index];
+                    print(friend.friendId);
+                    return FriendBox(
+                      name: friend.firstName,
+                      avatarUrl: friend.photo,
+                      friendId: friend.friendId,
+                      chatId: friend.chatId,
+                    );
+                    
+                  },
+                  
+                );
+              }
+            },
           ),
         ],
       ),
@@ -177,5 +244,55 @@ class FriendPageState extends State<FriendPage> {
         ),
       ),
     );
+  }
+  void _onAddFriendPressed(String newFriendName) async {
+  try {
+    // Add friend and wait for completion
+    await addFriend(newFriendName);
+
+    // Once addFriend is completed, refresh data and navigate back
+    refreshData();
+    Navigator.of(context).pop();
+  } catch (error) {
+    // Handle errors if necessary
+    print('Error adding friend: $error');
+  }
+}
+
+  addFriend(String newFriendName) async {
+    String friendId = newFriendName;
+    String userid = globalApiResponse!.userData!['id'];
+    String apiUrl = 'http://localhost:3099/addfriend';
+
+    Map<String, dynamic> requestBody = {
+        'friendId': friendId,
+      'userId': userid
+      };
+
+    // Create a FormData object to include text and image data
+
+    try {
+      var response = await postApi(apiUrl, requestBody);
+
+      // Handle the API response
+      if (response.statusCode == 200) {
+        // API call was successful
+        print('API Response: ${response.statusCode} ${response.data}');
+        // refreshData();
+
+        // Navigate back to the login page
+        // Navigator.pop(context);
+      } else {
+        // API call was not successful
+        print('API Response: ${response.statusCode} ${response.data}');
+
+        // Handle other responses or show an error message
+        // handleApiError(context, response);
+      }
+    } catch (error) {
+      // Handle errors
+      print('Error: $error');
+    }
+    // refreshData();
   }
 }

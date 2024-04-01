@@ -45,14 +45,28 @@ class ProfileCard extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.start,
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      profile.matchName,
-                      style: const TextStyle(
-                        fontFamily: 'Nunito',
-                        fontWeight: FontWeight.w800,
-                        fontSize: 21,
-                        color: Color(0xFF146001),
-                      ),
+                    Row(
+                      children: [
+                        Text(
+                          profile.matchName,
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 21,
+                            color: Color(0xFF146001),
+                          ),
+                        ),
+                        SizedBox(width: 10),
+                        Text(
+                          '(${profile.available})',
+                          style: const TextStyle(
+                            fontFamily: 'Nunito',
+                            fontWeight: FontWeight.w800,
+                            fontSize: 21,
+                            color: Color(0xFF146001),
+                          ),
+                        ),
+                      ],
                     ),
                     SizedBox(height: 5),
                     Row(

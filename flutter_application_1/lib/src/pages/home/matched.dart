@@ -1,40 +1,79 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/src/pages/home/member.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_application_1/src/pages/home/checkIn.dart';
 import 'package:flutter_application_1/src/pages/api_service.dart';
+import 'package:flutter_application_1/src/pages/checkin.dart';
+import 'package:flutter_application_1/src/pages/chat/chatScreen.dart';
+
+import 'package:flutter_application_1/src/pages/home/home.dart';
+import 'package:flutter_application_1/src/pages/navigator.dart';
 
 class MatchInfo {
   final String stadiumName;
+  final String matchName;
   final String date;
   final String time;
   final String photoLink;
+  final double lat;
+  final double long;
+  final int chatId;
+  final int matchId;
+  final int count;
 
   MatchInfo({
     required this.stadiumName,
+    required this.matchName,
     required this.date,
     required this.time,
     required this.photoLink,
+    required this.lat,
+    required this.long,
+    required this.chatId,
+    required this.matchId,
+    required this.count,
   });
 
   factory MatchInfo.fromJson(Map<String, dynamic> json) {
     return MatchInfo(
       stadiumName: json['namelocation'] ?? '',
+      matchName: json['matchName'] ?? '',
       date: json['day'] ?? '',
       time: json['time'] ?? '',
       photoLink: json['photo'] ?? '',
+      lat: json['lat'] != null
+          ? double.tryParse(json['lat'].toString()) ?? 0
+          : 0,
+      long: json['lng'] != null
+          ? double.tryParse(json['lng'].toString()) ?? 0
+          : 0,
+      chatId: json['chatId'] != null
+          ? int.tryParse(json['chatId'].toString()) ?? 0
+          : 0,
+      matchId: json['MatchId'] != null
+          ? int.tryParse(json['MatchId'].toString()) ?? 0
+          : 0,
+      count: json['count'] != null
+          ? int.tryParse(json['count'].toString()) ?? 0
+          : 0,
     );
   }
 }
 
 class Match extends StatefulWidget {
+  final String checkIn;
+
+  const Match({
+    Key? key,
+    required this.checkIn,
+  }) : super(key: key);
   @override
   MatchPageState createState() => MatchPageState();
 }
 
-int userId = globalApiResponse!.userData!['id'];
-
 class MatchPageState extends State<Match> {
   late Future<List<MatchInfo>> futureMatchList;
+  String userId = globalApiResponse!.userData!['id'];
 
   @override
   void initState() {
@@ -50,10 +89,11 @@ class MatchPageState extends State<Match> {
 
   Future<List<MatchInfo>> fetchData() async {
     List<MatchInfo> MatchList = [];
-    String apiUrl = 'http://localhost:3099/getmatchdone/7';
+    String apiUrl = 'http://localhost:3099/getmatchdone/${userId}';
 
     try {
       final response = await getApi(apiUrl);
+      print(userId);
 
       if (response.statusCode == 200) {
         // Parse the response data
@@ -80,20 +120,6 @@ class MatchPageState extends State<Match> {
 
     return MatchList;
   }
-  // Example data from the database
-  // List<Map<String, dynamic>> matchesData = [
-  //   {
-  //     'photo': 'assets/Images/linelogo.png',
-  //     'text': 'Sample Text 1',
-  //     'time': '12:30 PM',
-  //   },
-  //   {
-  //     'photo': 'URL_TO_PHOTO_2',
-  //     'text': 'Sample Text 2',
-  //     'time': '2:45 PM',
-  //   },
-  //   // Add more data as needed
-  // ];
 
   @override
   Widget build(BuildContext context) {
@@ -205,8 +231,8 @@ class MatchPageState extends State<Match> {
         children: [
           // Left side with square photo
           Container(
-            width: 100,
-            height: 100,
+            width: 110,
+            height: 120,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
@@ -221,30 +247,112 @@ class MatchPageState extends State<Match> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // SizedBox(height: 20),
-              Container(
-                width: 200, // Set your desired width here
-                child: Text(
-                  match.stadiumName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    // fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  // Expanded(
+                  // child:
+                  Text(
+                    match.matchName,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      // color: Color(0xFF146001),
+                    ),
+                    overflow: TextOverflow.clip, // Clip overflowing text
                   ),
-                  overflow: TextOverflow.clip, // Clip overflowing text
-                ),
+                  SizedBox(width: 5), 
+                  Text(
+                    '(${match.count})',
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      // color: Color(0xFF146001),
+                    ),
+                    overflow: TextOverflow.clip, // Clip overflowing text
+                  ),
+                  // ),
+                  SizedBox(width: 5), // Adjust spacing as needed
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.of(context).push(
+                        MaterialPageRoute(
+                          builder: (context) => MemberPage(
+                              matchId: match
+                                  .matchId), // Replace ChatScreen with your actual chat screen widget
+                        ),
+                      );
+                      // Handle button tap
+                    },
+                    child: Container(
+                      width: 25,
+                      height: 25,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        color: const Color.fromARGB(
+                            255, 255, 255, 255), // Choose your desired color
+                      ),
+                      child: Center(
+                        child: Icon(
+                          Icons.info_outline,
+                          color: Color.fromARGB(
+                              255, 0, 0, 0), // Choose your desired icon color
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
               ),
-              Text(
-                match.date,
-                style: TextStyle(
-                  fontSize: 16,
-                  // color: Colors.grey,
-                ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.stadium_outlined,
+                    size: 16,
+                    color: Colors.black,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    match.stadiumName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      // fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.clip, // Clip overflowing text
+                  ),
+                ],
               ),
-              Text(
-                '16:00',
-                style: TextStyle(
-                  fontSize: 16,
-                  // color: Colors.grey,
-                ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_month,
+                    size: 16,
+                    color: const Color.fromARGB(255, 63, 44, 44),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    match.date,
+                    style: TextStyle(
+                      fontSize: 16,
+                      // color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 16,
+                    color: const Color.fromARGB(255, 63, 44, 44),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '16:00',
+                    style: TextStyle(
+                      fontSize: 16,
+                      // color: Colors.grey,
+                    ),
+                  ),
+                ],
               ),
               SizedBox(height: 10),
               // Row for multiple buttons
@@ -257,9 +365,13 @@ class MatchPageState extends State<Match> {
                     child: ElevatedButton(
                       onPressed: () {
                         // Handle button click
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(builder: (context) => MapPage()),
+                        Navigator.of(context).push(
+                          MaterialPageRoute(
+                            builder: (context) => ChatScreen(
+                                name: match.matchName,
+                                chatId: match
+                                    .chatId), // Replace ChatScreen with your actual chat screen widget
+                          ),
                         );
                       },
                       style: ElevatedButton.styleFrom(
@@ -284,39 +396,45 @@ class MatchPageState extends State<Match> {
                     ),
                   ),
                   SizedBox(width: 15),
-                  Container(
-                    width: 80, // Adjusted width for a smaller button
-                    height: 30, // Adjusted height for a smaller button
-                    child: ElevatedButton(
-                      onPressed: () {
-                        Navigator.push(
-                                context,
-                                MaterialPageRoute(
-                                    builder: (context) => MapPage()),
-                              );
-                        // Handle button click
-                      },
-                      style: ElevatedButton.styleFrom(
-                        primary: Color(0xFF46A02F),
-                        shape: RoundedRectangleBorder(
-                          borderRadius: BorderRadius.circular(5.0),
+                  if (widget.checkIn != "checkin")
+                    Container(
+                      width: 80, // Adjusted width for a smaller button
+                      height: 30, // Adjusted height for a smaller button
+                      child: ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => MapsPage(
+                                    refreshCallback: refreshData,
+                                    desLat: match.lat,
+                                    desLong: match.long)),
+                          );
+                          refreshData();
+                          // Handle button click
+                        },
+                        style: ElevatedButton.styleFrom(
+                          primary: Color(0xFF46A02F),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(5.0),
+                          ),
+                          padding: EdgeInsets.symmetric(
+                              horizontal: 8), // Adjusted padding
+                          side: BorderSide(
+                              width: 0,
+                              color:
+                                  Color(0xFF46A02F)), // Adjusted border width
                         ),
-                        padding: EdgeInsets.symmetric(
-                            horizontal: 8), // Adjusted padding
-                        side: BorderSide(
-                            width: 0,
-                            color: Color(0xFF46A02F)), // Adjusted border width
-                      ),
-                      child: Text(
-                        'Check in',
-                        style: GoogleFonts.inter(
-                          color: Colors.white,
-                          fontSize: 15,
-                          fontWeight: FontWeight.bold,
+                        child: Text(
+                          'Check in',
+                          style: GoogleFonts.inter(
+                            color: Colors.white,
+                            fontSize: 15,
+                            fontWeight: FontWeight.bold,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                   // Add more buttons as needed
                 ],
               ),

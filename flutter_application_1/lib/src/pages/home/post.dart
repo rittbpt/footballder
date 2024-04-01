@@ -314,7 +314,7 @@ class PostPageState extends State<Post> {
     String location_Id = placeId ?? '';
     DateTime? selectedDate = selectedDateTime;
     String amount = selectedAmount ?? '';
-    int userid = globalApiResponse!.userData!['id'];
+    String userid = globalApiResponse!.userData!['id'];
     String apiUrl = 'http://localhost:3099/insertmatch';
 
     Map<String, dynamic> requestBody = {

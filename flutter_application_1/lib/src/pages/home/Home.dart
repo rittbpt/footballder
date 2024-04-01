@@ -5,6 +5,7 @@ import 'package:flutter_application_1/src/pages/home/findStadium.dart';
 import 'package:flutter_application_1/src/pages/home/matched.dart';
 import 'package:flutter_application_1/src/pages/home/request.dart';
 import 'package:flutter_application_1/src/pages/api_service.dart';
+import 'package:flutter_application_1/src/pages/checkin.dart';
 
 class HomePage extends StatefulWidget {
   final String? userId;
@@ -20,12 +21,14 @@ class HomePage extends StatefulWidget {
 
 class RecentMatchInfo {
   final String stadiumName;
+  final String matchName;
   final String date;
   final String time;
   final String photoLink;
 
   RecentMatchInfo({
     required this.stadiumName,
+    required this.matchName,
     required this.date,
     required this.time,
     required this.photoLink,
@@ -34,20 +37,28 @@ class RecentMatchInfo {
   factory RecentMatchInfo.fromJson(Map<String, dynamic> json) {
     return RecentMatchInfo(
       stadiumName: json['namelocation'] ?? '',
+      matchName: json['matchName'] ?? '',
       date: json['day'] ?? '',
       time: json['time'] ?? '',
-      photoLink: json['photoLink'] ?? '',
+      photoLink: json['photo'] ?? '',
     );
   }
 }
 
 class _HomePageState extends State<HomePage> {
-  String firstName = globalApiResponse!.userData!['firstName'];
+  late String firstName;
+  late String photo;
+  late String userid;
   late Future<List<RecentMatchInfo>> futureRecentMatchList;
 
   @override
   void initState() {
     super.initState();
+    if (globalApiResponse != null) {
+      firstName = globalApiResponse!.userData?['firstName'] ?? '';
+      photo = globalApiResponse!.userData?['photo'] ?? '';
+      userid = globalApiResponse!.userData?['id'] ?? '';
+    }
     futureRecentMatchList = fetchData();
   }
 
@@ -59,7 +70,7 @@ class _HomePageState extends State<HomePage> {
 
   Future<List<RecentMatchInfo>> fetchData() async {
     List<RecentMatchInfo> RecentMatchList = [];
-    String apiUrl = 'http://localhost:3099/getrecent/${userId}';
+    String apiUrl = 'http://localhost:3099/getrecent/${userid}';
 
     try {
       final response = await getApi(apiUrl);
@@ -163,18 +174,20 @@ class _HomePageState extends State<HomePage> {
                         shape: BoxShape.circle,
                         color: Color.fromRGBO(185, 185, 185, 1),
                       ),
-                      child: widget.imageUrl != null
-                          ? ClipOval(
+                      child: 
+                      // widget.imageUrl != null
+                      //     ? 
+                          ClipOval(
                               child: Image.network(
-                                widget.imageUrl!,
+                                photo,
                                 fit: BoxFit.fill,
                               ),
                             )
-                          : Icon(
-                              Icons.person,
-                              color: Colors.white,
-                              size: 40,
-                            ),
+                          // : Icon(
+                          //     Icons.person,
+                          //     color: Colors.white,
+                          //     size: 40,
+                          //   ),
                     ),
                   ),
                 ],
@@ -289,7 +302,7 @@ class _HomePageState extends State<HomePage> {
                               Navigator.push(
                                 context,
                                 MaterialPageRoute(
-                                    builder: (context) => Match()),
+                                    builder: (context) => Match(checkIn: 'NotCheckIn')),
                               );
                             },
                             child: Container(
@@ -399,62 +412,6 @@ class _HomePageState extends State<HomePage> {
                         }
                       },
                     ),
-                    // FutureBuilder<List<MatchInfo>>(
-                    //   future: fetchData(),
-                    //   builder: (context, snapshot) {
-                    //     if (snapshot.connectionState ==
-                    //         ConnectionState.waiting) {
-                    //       return Container(
-                    //         alignment: Alignment
-                    //             .center, // Center the CircularProgressIndicator
-                    //         margin: EdgeInsets.only(
-                    //             top: 20), // Add margin from the top
-                    //         child: CircularProgressIndicator(
-                    //           color: Color(0xFF146001),
-                    //         ),
-                    //       ); // Display loading indicator while fetching data
-                    //     } else if (snapshot.hasError) {
-                    //       return Text('Error: ${snapshot.error}');
-                    //     } else if (!snapshot.hasData ||
-                    //         snapshot.data!.isEmpty) {
-                    //       return Text('No recent matches found.');
-                    //     } else {
-                    //       return Column(
-                    //         children: snapshot.data!.map((match) {
-                    //           return Container(
-                    //             margin: EdgeInsets.symmetric(vertical: 10),
-                    //             padding: EdgeInsets.all(10),
-                    //             width: double.infinity,
-                    //             decoration: BoxDecoration(
-                    //               border: Border.all(
-                    //                   color: const Color.fromARGB(
-                    //                       255, 255, 255, 255)),
-                    //               borderRadius: BorderRadius.circular(10),
-                    //               gradient: LinearGradient(
-                    //                 colors: [
-                    //                   Color(0xFFDFE2DB),
-                    //                   const Color.fromARGB(255, 255, 255, 255)
-                    //                 ], // Change colors as needed
-                    //                 begin: Alignment.topCenter,
-                    //                 end: Alignment.bottomCenter,
-                    //               ),
-                    //             ),
-                    //             child: Column(
-                    //               crossAxisAlignment: CrossAxisAlignment.start,
-                    //               children: [
-                    //                 Text('${match.photoName}'),
-                    //                 SizedBox(height: 5),
-                    //                 Text('Date: ${match.date}'),
-                    //                 SizedBox(height: 5),
-                    //                 Text('Time: ${match.time}'),
-                    //               ],
-                    //             ),
-                    //           );
-                    //         }).toList(),
-                    //       );
-                    //     }
-                    //   },
-                    // ),
                   ],
                 ),
               ),
@@ -486,12 +443,12 @@ class _HomePageState extends State<HomePage> {
         children: [
           // Left side with square photo
           Container(
-            width: 80,
+            width: 100,
             height: 100,
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(10),
               image: DecorationImage(
-                image: AssetImage(recentMatch.photoLink),
+                image: NetworkImage(recentMatch.photoLink),
                 fit: BoxFit.cover,
               ),
             ),
@@ -501,31 +458,70 @@ class _HomePageState extends State<HomePage> {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              // SizedBox(height: 20),
-              Container(
-                width: 200, // Set your desired width here
-                child: Text(
-                  recentMatch.stadiumName,
-                  style: TextStyle(
-                    fontSize: 16,
-                    // fontWeight: FontWeight.bold,
+              Row(
+                children: [
+                  Text(
+                    recentMatch.matchName,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      // color: Color(0xFF146001),
+                    ),
+                    overflow: TextOverflow.clip, // Clip overflowing text
                   ),
-                  overflow: TextOverflow.clip, // Clip overflowing text
-                ),
+                ],
               ),
-              Text(
-                recentMatch.date,
-                style: TextStyle(
-                  fontSize: 16,
-                  // color: Colors.grey,
-                ),
+              // SizedBox(height: 20),
+              Row(
+                children: [
+                  Icon(
+                    Icons.stadium_outlined,
+                    size: 16,
+                    color: Colors.black,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '${recentMatch.stadiumName}',
+                    style: TextStyle(
+                        // Adjust style as needed
+                        ),
+                  ),
+                ],
               ),
-              Text(
-                '16:00',
-                style: TextStyle(
-                  fontSize: 16,
-                  // color: Colors.grey,
-                ),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_month,
+                    size: 16,
+                    color: const Color.fromARGB(255, 63, 44, 44),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '${recentMatch.date}',
+                    style: TextStyle(
+                        // Adjust style as needed
+                        ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 5),
+              Row(
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 16,
+                    color: const Color.fromARGB(255, 63, 44, 44),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '${recentMatch.time}',
+                    style: TextStyle(
+                        // fontSize: 16,
+                        // color: Colors.grey,
+                        ),
+                  ),
+                ],
               ),
               SizedBox(height: 10),
               // Row for multiple buttons

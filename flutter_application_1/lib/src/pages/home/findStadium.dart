@@ -52,74 +52,29 @@ class FindStadiumPage extends StatefulWidget {
 class FindStadiumPageState extends State<FindStadiumPage> {
   TextEditingController SearchController = TextEditingController();
   // List<StadiumInfo> stadiumList = [];
-  late Future<List<StadiumInfo>> futureStadiumList;
+  List<StadiumInfo> allStadiums = []; // List of all chats
+  List<StadiumInfo> filteredStadiums = [];
+  Future<List<StadiumInfo>>? futureStadiumList;
 
   @override
   void initState() {
     super.initState();
-    futureStadiumList = fetchData();
-    // fetchData().then((data) {
-    //   setState(() {
-    //     stadiumList = data;
-    //   });
-    // });
+    fetchStadiumList();
   }
 
-  // Create a list of StadiumInfo objects
-  // List<StadiumInfo> stadiumList = [
-  //   StadiumInfo(
-  //     name: 'Stadium A',
-  //     imageUrls: [
-  //       'assets/Images/homescreen1.png',
-  //       'assets/Images/homescreen1.png',
-  //       'assets/Images/homescreen1.png',
-  //     ],
-  //     rating: 4.0,
-  //     openHours: '9:00 AM - 5:00 PM',
-  //     phoneNumber: '+1234567890',
-  //     latitude: 37.7749, // Example latitude for Stadium A
-  //     longitude: -122.4194,
-  //   ),
-  //   StadiumInfo(
-  //     name: 'Stadium A',
-  //     imageUrls: [
-  //       'assets/Images/homescreen1.png',
-  //       'assets/Images/homescreen1.png',
-  //     ],
-  //     rating: 3.2,
-  //     openHours: '9:00 AM - 5:00 PM',
-  //     phoneNumber: '+1234567890',
-  //     latitude: 37.7749, // Example latitude for Stadium A
-  //     longitude: -122.4194,
-  //   ),
-  //   StadiumInfo(
-  //     name: 'Stadium A',
-  //     imageUrls: [
-  //       'assets/Images/homescreen1.png',
-  //       'assets/Images/homescreen1.png',
-  //       'assets/Images/homescreen1.png',
-  //     ],
-  //     rating: 4.5,
-  //     openHours: '9:00 AM - 5:00 PM',
-  //     phoneNumber: '+1234567890',
-  //     latitude: 37.7749, // Example latitude for Stadium A
-  //     longitude: -122.4194,
-  //   ),
-  //   StadiumInfo(
-  //     name: 'Stadium A',
-  //     imageUrls: [
-  //       'assets/Images/homescreen1.png',
-  //       'assets/Images/homescreen1.png',
-  //       'assets/Images/homescreen1.png',
-  //     ],
-  //     rating: 4.5,
-  //     openHours: '9:00 AM - 5:00 PM',
-  //     phoneNumber: '+1234567890',
-  //     latitude: 37.7749, // Example latitude for Stadium A
-  //     longitude: -122.4194,
-  //   ),
-  //   // Add more stadiums as needed
-  // ];
+  void fetchStadiumList() async {
+    try {
+      List<StadiumInfo> chatList = await fetchData();
+      setState(() {
+        allStadiums = chatList;
+        filteredStadiums = List.from(allStadiums);
+        futureStadiumList = Future.value(chatList); // Initialize filteredChats with allChats
+      });
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
+  }
+
 
   Future<List<StadiumInfo>> fetchData() async {
     List<StadiumInfo> stadiumList = [];
@@ -152,6 +107,13 @@ class FindStadiumPageState extends State<FindStadiumPage> {
     print(stadiumList);
 
     return stadiumList;
+  }
+
+  void filterStadiums(String query) {
+    setState(() {
+      // filteredChats.clear();
+      filteredStadiums = allStadiums.where((stadium) => stadium.name.toLowerCase().contains(query.toLowerCase())).toList();
+    });
   }
 
   @override
@@ -189,12 +151,12 @@ class FindStadiumPageState extends State<FindStadiumPage> {
                   ),
                 ),
                 SizedBox(height: 30),
-                chatSelectionPageState.buildSearchBox(SearchController, 0),
+                chatSelectionPageState.buildSearchBox(SearchController, 0,filterStadiums),
                 SizedBox(height: 20),
                 FutureBuilder<List<StadiumInfo>>(
                   future: futureStadiumList,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    if (snapshot.connectionState == ConnectionState.waiting|| futureStadiumList == null) {
                       // Display a loading indicator while waiting for data
                       return Container(
                         alignment: Alignment.center, // Center the CircularProgressIndicator
@@ -209,13 +171,13 @@ class FindStadiumPageState extends State<FindStadiumPage> {
                       return Text('Error fetching data');
                     } else {
                       // Data has been successfully fetched, display it
-                      List<StadiumInfo> stadiumList = snapshot.data!;
+                      // List<StadiumInfo> stadiumList = snapshot.data!;
                       return ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: stadiumList.length,
+                        itemCount: filteredStadiums.length,
                         itemBuilder: (context, index) {
-                          StadiumInfo stadium = stadiumList[index];
+                          StadiumInfo stadium = filteredStadiums[index];
                           return buildStadiumCard(stadium);
                         },
                       );

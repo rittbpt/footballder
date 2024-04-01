@@ -363,7 +363,6 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
     'lastName': lastName,
     'password': password,
     'birthDay': birthday?.toString(),
-    'photo': "1",
   };
 
   print(birthday?.toString());
@@ -379,6 +378,7 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
 
       // Navigate back to the login page
       Navigator.pop(context);
+      uploadImage();
     } else {
       // API call was not successful
       print('API Response: ${response.statusCode} ${response.data}');
@@ -389,6 +389,31 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
   } catch (error) {
     // Handle errors
     print('Error: $error');
+  }
+}
+// XFile? selectedImage = _selectedImage;
+    Future<void> uploadImage() async {
+  Dio dio = Dio();
+  String email = emailController.text;
+  File imageFile = File(_selectedImage!.path);
+
+  try {
+    // String fileName = imageFile.path.split('/').last;
+    FormData formData = FormData.fromMap({
+      'photo': await MultipartFile.fromFile(
+        imageFile.path,
+      ),
+    });
+
+    Response response = await dio.post("http://localhost:3099/upload/${email}", data: formData);
+
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully ${response.data}');
+    } else {
+      print('Error uploading image: ${response.statusMessage}');
+    }
+  } catch (e) {
+    print('Error uploading image: $e');
   }
 }
 

@@ -102,6 +102,7 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
     try {
       final response =
           await getOtpApi('http://localhost:3099/sendotp', requestBody);
+      print('API Response: ${response.statusCode} ${response.data}');
 
       if (response.statusCode == 200) {
         // Parse the response data
@@ -111,11 +112,62 @@ class ForgetPasswordPageState extends State<ForgetPasswordPage> {
           context,
           MaterialPageRoute(builder: (context) => OtpPage(getotp,email)),
         );
-      } else {
+      } else if (response.statusCode == 400){
+        print('API Response: ${response.statusCode} ${response.data}');
+        showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                        title: Text('Error'),
+                        content: Text('Wrong email.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: TextButton.styleFrom(
+                              primary:
+                                  Color(0xFF146001), // Set the text color here
+                            ),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+        // throw Exception('Failed to fetch data');
+      }
+      else {
+        print('API Response: ${response.statusCode} ${response.data}');
         throw Exception('Failed to fetch data');
       }
     } catch (error) {
-      print('Error: $error');
+      showDialog(
+                    context: context,
+                    builder: (BuildContext context) {
+                      return AlertDialog(
+                        backgroundColor:
+                            const Color.fromARGB(255, 255, 255, 255),
+                        title: Text('Error'),
+                        content: Text('Wrong email.'),
+                        actions: [
+                          TextButton(
+                            onPressed: () {
+                              Navigator.of(context).pop();
+                            },
+                            style: TextButton.styleFrom(
+                              primary:
+                                  Color(0xFF146001), // Set the text color here
+                            ),
+                            child: Text('OK'),
+                          ),
+                        ],
+                      );
+                    },
+                  );
+      print('Error: ${error}');
     }
   }
 }

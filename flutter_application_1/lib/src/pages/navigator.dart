@@ -6,13 +6,15 @@ import 'package:flutter_application_1/src/pages/findmatch/searchMatch.dart';
 import 'package:flutter_application_1/src/pages/tinder/tinder.dart';
 
 class NavigatorPage extends StatefulWidget {
+  final int initialPageIndex;
 
-  final String? userId;
-  final String? displayName;
-  final String? imageUrl;
+  // final String? userId;
+  // final String? displayName;
+  // final String? imageUrl;
 
-  const NavigatorPage({Key? key, this.userId, this.displayName, this.imageUrl})
-      : super(key: key);
+  // const NavigatorPage({Key? key, this.userId, this.displayName, this.imageUrl})
+  const NavigatorPage({Key? key, this.initialPageIndex = 0}) : super(key: key);
+  //     : super(key: key);
   @override
   _NavigatorPageState createState() => _NavigatorPageState();
 }
@@ -27,6 +29,18 @@ class _NavigatorPageState extends State<NavigatorPage> {
     ChatSelectionPage(),
     ProfilePage(),
   ];
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialPageIndex;
+  }
+
+  void setSelectedPageIndex(int index) {
+    setState(() {
+      _currentIndex = index;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {

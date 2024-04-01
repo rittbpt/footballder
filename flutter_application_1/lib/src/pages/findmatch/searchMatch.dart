@@ -10,6 +10,7 @@ class FindMatchInfo {
   final String time;
   final int matchId;
   final String photolink;
+  final int available;
 
   FindMatchInfo({
     required this.matchName,
@@ -18,6 +19,7 @@ class FindMatchInfo {
     required this.time,
     required this.matchId,
     required this.photolink,
+    required this.available,
   });
 
   factory FindMatchInfo.fromJson(Map<String, dynamic> json) {
@@ -30,6 +32,9 @@ class FindMatchInfo {
       matchId: json['MatchId'] != null
           ? int.tryParse(json['MatchId'].toString()) ?? 0
           : 0,
+      available: json['available'] != null
+          ? int.tryParse(json['available'].toString()) ?? 0
+          : 0,
     );
   }
 }
@@ -39,23 +44,39 @@ class SearchMatchPage extends StatefulWidget {
   SearchMatchPageState createState() => SearchMatchPageState();
 }
 
-int userId = globalApiResponse!.userData!['id'];
 
 class SearchMatchPageState extends State<SearchMatchPage> {
   TextEditingController SearchController = TextEditingController();
-
-  late Future<List<FindMatchInfo>> futureFindMatchList;
+  List<FindMatchInfo> allMatchs = []; // List of all chats
+  List<FindMatchInfo> filteredMatchs = [];
+  Future<List<FindMatchInfo>>? futureFindMatchList;
+  String userId = globalApiResponse!.userData!['id'];
 
   @override
   void initState() {
     super.initState();
-    futureFindMatchList = fetchData();
+    // futureFindMatchList = fetchData();
+    fetchMatchList();
   }
 
   void refreshData() {
     setState(() {
-      futureFindMatchList = fetchData();
+      // futureFindMatchList = fetchData();
+      fetchMatchList();
     });
+  }
+
+  void fetchMatchList() async {
+    try {
+      List<FindMatchInfo> chatList = await fetchData();
+      setState(() {
+        allMatchs = chatList;
+        filteredMatchs = List.from(allMatchs);
+        futureFindMatchList = Future.value(chatList); // Initialize filteredChats with allChats
+      });
+    } catch (error) {
+      print('Error fetching data: $error');
+    }
   }
 
   Future<List<FindMatchInfo>> fetchData() async {
@@ -63,7 +84,8 @@ class SearchMatchPageState extends State<SearchMatchPage> {
 
     try {
       final response =
-          await getApi('http://localhost:3099/getallmatch/7');
+          await getApi('http://localhost:3099/getallmatch/${userId}');
+          print(userId);
 
       if (response.statusCode == 200) {
         // Parse the response data
@@ -92,21 +114,14 @@ class SearchMatchPageState extends State<SearchMatchPage> {
     return FindMatchList;
   }
 
-  // List<Match> matches = [
-  //   Match(
-  //     name: 'ปล่อยใจจอยๆ',
-  //     stadiumName: 'สนามแกรนด์ ซอคเกอร์โปร',
-  //     date: 'March 25, 2024',
-  //     imageUrl: 'assets/Images/homescreen1.png',
-  //   ),
-  //   Match(
-  //     name: 'Match 2',
-  //     stadiumName: 'Stadium 2',
-  //     date: 'April 2, 2024',
-  //     imageUrl: 'assets/Images/homescreen1.png',
-  //   ),
-  //   // Add more matches as needed
-  // ];
+  void filterMatchs(String query) {
+    setState(() {
+      // filteredChats.clear();
+      filteredMatchs = allMatchs.where((match) => match.matchName.toLowerCase().contains(query.toLowerCase())).toList();
+    });
+  }
+
+
 
   @override
   Widget build(BuildContext context) {
@@ -142,12 +157,12 @@ class SearchMatchPageState extends State<SearchMatchPage> {
                   ),
                 ),
                 SizedBox(height: 30),
-                chatSelectionPageState.buildSearchBox(SearchController, 0),
+                chatSelectionPageState.buildSearchBox(SearchController, 0, filterMatchs),
                 SizedBox(height: 20),
                 FutureBuilder<List<FindMatchInfo>>(
                   future: futureFindMatchList,
                   builder: (context, snapshot) {
-                    if (snapshot.connectionState == ConnectionState.waiting) {
+                    if (snapshot.connectionState == ConnectionState.waiting|| futureFindMatchList == null) {
                       // Display a loading indicator while waiting for data
                       return Container(
                         alignment: Alignment
@@ -163,15 +178,14 @@ class SearchMatchPageState extends State<SearchMatchPage> {
                       return Text('Error fetching data');
                     } else {
                       // Data has been successfully fetched, display it
-                      List<FindMatchInfo> findMatchList = snapshot.data!;
+                      // List<FindMatchInfo> findMatchList = snapshot.data!;
                       return ListView.builder(
                         shrinkWrap: true,
                         physics: NeverScrollableScrollPhysics(),
-                        itemCount: findMatchList.length,
+                        itemCount: filteredMatchs.length,
                         itemBuilder: (context, index) {
-                          FindMatchInfo findMatch = findMatchList[index];
-                          return buildMatchCard(
-                              context, findMatch);
+                          FindMatchInfo findMatch = filteredMatchs[index];
+                          return buildMatchCard(context, findMatch);
                         },
                       );
                     }
@@ -185,195 +199,209 @@ class SearchMatchPageState extends State<SearchMatchPage> {
     );
   }
 
+  Widget buildMatchCard(BuildContext context, FindMatchInfo findMatch) {
+    final TextEditingController _positionController = TextEditingController();
+    void request(String position) async {
+      int MatchId = findMatch.matchId;
+      String Position = position;
+      String userid = userId;
+      String apiUrl = 'http://localhost:3099/insertrequest';
 
-Widget buildMatchCard(
-    BuildContext context, FindMatchInfo findMatch) {
-  final TextEditingController _positionController = TextEditingController();
-  void request(String position) async {
-    int MatchId = findMatch.matchId;
-    String Position = position;
-    int userid = userId;
-    String apiUrl = 'http://localhost:3099/insertrequest';
+      Map<String, dynamic> requestBody = {
+        'MatchId': MatchId,
+        'Position': Position,
+        'userId': userid
+      };
 
-    Map<String, dynamic> requestBody = {
-      'MatchId': MatchId,
-      'Position': Position,
-      'userId': userid
-    };
+      try {
+        var response = await postApi(apiUrl, requestBody);
 
-    try {
-      var response = await postApi(apiUrl, requestBody);
+        // Handle the API response
+        if (response.statusCode == 200) {
+          // API call was successful
+          print('API Response: ${response.statusCode} ${response.data}');
+          print('match ${MatchId}');
+          print('match ${Position}');
+          print('match ${userid}');
+          refreshData();
 
-      // Handle the API response
-      if (response.statusCode == 200) {
-        // API call was successful
-        print('API Response: ${response.statusCode} ${response.data}');
-        print('match ${MatchId}');
-        print('match ${Position}');
-        print('match ${userid}');
+          // Navigate back to the login page
+          // Navigator.pop(context);
+        } else {
+          // API call was not successful
+          print('API Response: ${response.statusCode} ${response.data}');
 
-        // Navigate back to the login page
-        // Navigator.pop(context);
-      } else {
-        // API call was not successful
-        print('API Response: ${response.statusCode} ${response.data}');
-
-        // Handle other responses or show an error message
-        // handleApiError(context, response);
+          // Handle other responses or show an error message
+          // handleApiError(context, response);
+        }
+      } catch (error) {
+        // Handle errors
+        print('Error: $error');
       }
-    } catch (error) {
-      // Handle errors
-      print('Error: $error');
     }
-  }
 
-  return Card(
-    margin: EdgeInsets.symmetric(vertical: 10),
-    color: Color.fromARGB(255, 243, 243, 243),
-    elevation: 0, // Remove card elevation
-    shape: RoundedRectangleBorder(
-      borderRadius: BorderRadius.circular(20.0), // Adjust the radius as needed
-    ),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        ClipRRect(
-          borderRadius:
-              BorderRadius.circular(20.0), // Adjust the radius as needed
-          child: Image.network(
-            findMatch.photolink,
-            height: 300,
-            width: double.infinity,
-            fit: BoxFit.cover,
+    return Card(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      color: Color.fromARGB(255, 243, 243, 243),
+      elevation: 0, // Remove card elevation
+      shape: RoundedRectangleBorder(
+        borderRadius:
+            BorderRadius.circular(20.0), // Adjust the radius as needed
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          ClipRRect(
+            borderRadius:
+                BorderRadius.circular(20.0), // Adjust the radius as needed
+            child: Image.network(
+              findMatch.photolink,
+              height: 300,
+              width: double.infinity,
+              fit: BoxFit.cover,
+            ),
           ),
-        ),
-        Padding(
-          padding: EdgeInsets.only(top: 10, left: 5),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                findMatch.matchName,
-                style: TextStyle(
-                  color: Color(0xFF146001),
-                  fontFamily: 'Inter',
-                  fontSize: 22,
-                  fontWeight: FontWeight.bold,
-                ),
-              ),
-              SizedBox(height: 5),
-              Padding(
-                padding: EdgeInsets.symmetric(
-                    horizontal: 20), // Adjust horizontal padding as needed
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
+          Padding(
+            padding: EdgeInsets.only(top: 10, left: 5),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
                   children: [
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.stadium_outlined,
-                          size: 16,
-                          color: Colors.black,
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          '${findMatch.stadiumName}',
-                          style: TextStyle(
-                              // Adjust style as needed
-                              ),
-                        ),
-                      ],
+                    Text(
+                      findMatch.matchName,
+                      style: TextStyle(
+                        color: Color(0xFF146001),
+                        fontFamily: 'Inter',
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
-                    SizedBox(height: 5),
-                    Row(
-                      children: [
-                        Icon(
-                          Icons.timer_outlined,
-                          size: 16,
-                          color: const Color.fromARGB(255, 63, 44, 44),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          '${findMatch.date}',
-                          style: TextStyle(
-                              // Adjust style as needed
-                              ),
-                        ),
-                        SizedBox(width: 5),
-                        Text(
-                          '${findMatch.time}',
-                          style: TextStyle(
-                              // Adjust style as needed
-                              ),
-                        ),
-                      ],
+                    SizedBox(width: 10),
+                    Text(
+                      '(${findMatch.available})',
+                      style: TextStyle(
+                        color: Color(0xFF146001),
+                        fontFamily: 'Inter',
+                        fontSize: 22,
+                        fontWeight: FontWeight.bold,
+                      ),
                     ),
                   ],
                 ),
-              ),
-              SizedBox(height: 10),
-              Container(
-                width: double.infinity,
-                height: 50,
-                child: ElevatedButton(
-                  style: ElevatedButton.styleFrom(
-                    primary: Color(0xFF146001),
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(6),
-                    ),
-                  ),
-                  onPressed: () {
-                    showDialog(
-                      context: context,
-                      builder: (BuildContext context) {
-                        return AlertDialog(
-                          backgroundColor:
-                              const Color.fromARGB(255, 255, 255, 255),
-                          title: Text('Position'),
-                          content: TextField(
-                            controller: _positionController,
-                            decoration: InputDecoration(
-                              hintText: 'Enter your position',
-                            ),
+                SizedBox(height: 5),
+                Padding(
+                  padding: EdgeInsets.symmetric(
+                      horizontal: 20), // Adjust horizontal padding as needed
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.stadium_outlined,
+                            size: 16,
+                            color: Colors.black,
                           ),
-                          actions: [
-                            TextButton(
-                              onPressed: () {
-                                String position = _positionController.text;
-                                request(position);
-                                Navigator.of(context).pop();
-                                refreshData();
-                                // Add logic to save friend's name;
-                              },
-                              child: Text('Request'),
-                              style: TextButton.styleFrom(
-                                primary: Color(
-                                    0xFF146001), // Set the text color here
+                          SizedBox(width: 5),
+                          Text(
+                            '${findMatch.stadiumName}',
+                            style: TextStyle(
+                                // Adjust style as needed
+                                ),
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 5),
+                      Row(
+                        children: [
+                          Icon(
+                            Icons.timer_outlined,
+                            size: 16,
+                            color: const Color.fromARGB(255, 63, 44, 44),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            '${findMatch.date}',
+                            style: TextStyle(
+                                // Adjust style as needed
+                                ),
+                          ),
+                          SizedBox(width: 5),
+                          Text(
+                            '${findMatch.time}',
+                            style: TextStyle(
+                                // Adjust style as needed
+                                ),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+                SizedBox(height: 10),
+                Container(
+                  width: double.infinity,
+                  height: 50,
+                  child: ElevatedButton(
+                    style: ElevatedButton.styleFrom(
+                      primary: Color(0xFF146001),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(6),
+                      ),
+                    ),
+                    onPressed: () {
+                      showDialog(
+                        context: context,
+                        builder: (BuildContext context) {
+                          return AlertDialog(
+                            backgroundColor:
+                                const Color.fromARGB(255, 255, 255, 255),
+                            title: Text('Position'),
+                            content: TextField(
+                              controller: _positionController,
+                              decoration: InputDecoration(
+                                hintText: 'Enter your position',
                               ),
                             ),
-                          ],
-                        );
-                      },
-                    );
-                    // Handle button press
-                  },
-                  child: Text(
-                    'Request to join!',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontFamily: 'DM Sans-Bold',
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      letterSpacing: 0.84,
+                            actions: [
+                              TextButton(
+                                onPressed: () {
+                                  String position = _positionController.text;
+                                  request(position);
+                                  Navigator.of(context).pop();
+                                  // refreshData();
+                                  // Add logic to save friend's name;
+                                },
+                                child: Text('Request'),
+                                style: TextButton.styleFrom(
+                                  primary: Color(
+                                      0xFF146001), // Set the text color here
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                      // Handle button press
+                    },
+                    child: Text(
+                      'Request to join!',
+                      style: TextStyle(
+                        color: Colors.white,
+                        fontFamily: 'DM Sans-Bold',
+                        fontSize: 18,
+                        fontWeight: FontWeight.bold,
+                        letterSpacing: 0.84,
+                      ),
                     ),
                   ),
                 ),
-              ),
-            ],
+              ],
+            ),
           ),
-        ),
-      ],
-    ),
-  );
-}
+        ],
+      ),
+    );
+  }
 }

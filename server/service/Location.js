@@ -6,8 +6,8 @@ const method = {
     getlocation: async function () {
         try {
             var searchQuery = "soccer field";
-            var latitude = 13.7570485;
-            var longitude = 100.5025447;
+            var latitude = 13.846176;
+            var longitude = 100.568589;
             var radius = 50000;
             const url = `https://maps.googleapis.com/maps/api/place/nearbysearch/json?` +
                 `location=${latitude},${longitude}` +

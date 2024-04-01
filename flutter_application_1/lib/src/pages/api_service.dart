@@ -14,13 +14,42 @@ class ApiResponse {
 String? globalToken;
 ApiResponse? globalApiResponse;
 
+void resetGlobalVariables() {
+  globalToken = null;
+  globalApiResponse = null;
+}
+
+void resetUserData() {
+  globalApiResponse = null;
+}
+
 Future<ApiResponse> postloginApi(String apiUrl, Map<String, dynamic> requestBody) async {
   var dio = Dio();
   try {
-    var response = await dio.post(apiUrl, data: requestBody,);
+    var response = await dio.post(apiUrl, data: requestBody);
+    resetGlobalVariables();
     
     // Extract token from response headers or body
     globalToken = response.data['token'];
+
+    // Extract user data from response data
+    Map<String, dynamic>? extractedUserData = response.data['data'];
+
+    globalApiResponse = ApiResponse(data: response.data, token: globalToken, userData: extractedUserData);
+
+    // Return ApiResponse with data and token
+    return ApiResponse(data: response.data, token: globalToken, userData: extractedUserData);
+  } catch (error) {
+    throw error;
+  }
+}
+
+Future<ApiResponse> postEditPofileApi(String apiUrl, Map<String, dynamic> requestBody) async {
+  var dio = Dio();
+  try {
+    var response = await dio.post(apiUrl, data: requestBody);
+    resetUserData();
+    
 
     // Extract user data from response data
     Map<String, dynamic>? extractedUserData = response.data['data'];

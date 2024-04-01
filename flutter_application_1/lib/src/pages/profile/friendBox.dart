@@ -1,15 +1,21 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_application_1/src/pages/chat/chatScreen.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:flutter_application_1/src/pages/api_service.dart';
+import 'package:flutter_application_1/src/pages/chat/chat.dart';
 
 class FriendBox extends StatelessWidget {
   final String name;
   final String avatarUrl;
+  final String friendId;
+  final int chatId;
 
   const FriendBox({
     Key? key,
     required this.name,
     required this.avatarUrl,
+    required this.friendId,
+    required this.chatId,
   }) : super(key: key);
 
   @override
@@ -59,6 +65,14 @@ class FriendBox extends StatelessWidget {
               child: ElevatedButton(
                 onPressed: () {
                   // Handle button click
+                  Navigator.of(context).push(
+                    MaterialPageRoute(
+                      builder: (context) => ChatScreen(
+                          name: name,
+                          chatId:
+                              chatId), // Replace ChatScreen with your actual chat screen widget
+                    ),
+                  );
                 },
                 style: ElevatedButton.styleFrom(
                   primary: Color(0xFF146001),
@@ -86,4 +100,5 @@ class FriendBox extends StatelessWidget {
       ),
     );
   }
+
 }

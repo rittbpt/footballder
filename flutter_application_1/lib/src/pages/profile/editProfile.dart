@@ -7,6 +7,7 @@ import 'package:flutter_application_1/src/pages/api_service.dart';
 import 'package:dio/dio.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_application_1/src/pages/home/date.dart';
+import 'package:flutter_application_1/src/pages/login/login.dart';
 
 
 class EditProfilePage extends StatefulWidget {
@@ -68,9 +69,6 @@ class EditProfilePageState extends State<EditProfilePage> {
                     });
                   },
                 ),
-                buildPasswordTextField('Password', passwordController),
-                buildPasswordTextField(
-                    'Confirm Password', confirmPasswordController),
                 SizedBox(height: 12),
                 buildSignUpButton(),
               ],
@@ -266,17 +264,22 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
       child: ElevatedButton(
         onPressed: () {
           // Perform sign-up action and check if passwords match
-          if (passwordController.text == confirmPasswordController.text) {
-            signUp();
-          } else {
-            // Handle password mismatch
-            showDialog(
+          if (
+            emailController.text.isEmpty ||
+            phoneNumberController.text.isEmpty ||
+            firstNameController.text.isEmpty ||
+            lastNameController.text.isEmpty ||
+            passwordController.text.isEmpty ||
+            confirmPasswordController.text.isEmpty ||
+            selectedDate == null ||
+            _selectedImage == null ) {
+              showDialog(
               context: context,
               builder: (BuildContext context) {
                 return AlertDialog(
                   backgroundColor: const Color.fromARGB(255, 255, 255, 255),
                   title: Text('Error'),
-                  content: Text('Passwords do not match.'),
+                  content: Text('Please enter everyline.'),
                   actions: [
                     TextButton(
                       onPressed: () {
@@ -291,7 +294,9 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
                 );
               },
             );
-          }
+          } else  {
+            updateProfile();
+          } 
         },
         style: ElevatedButton.styleFrom(
           primary: Color(0xFF146001),
@@ -313,49 +318,83 @@ Widget buildNumberTextField(String label, TextEditingController controller) {
     );
   }
 
-  void signUp() async {
-
-
+  void updateProfile() async {
+  String userid = globalApiResponse!.userData!['id'];
   String email = emailController.text;
   String phoneNumber = phoneNumberController.text;
   String firstName = firstNameController.text;
   String lastName = lastNameController.text;
-  String password = passwordController.text;
   DateTime? birthday = selectedDate;
+  String urlApi = 'http://localhost:3099/updateprofile';
 
   // Create a FormData object to include text and image data
-  var formData = FormData.fromMap({
+  Map<String, dynamic> formData = {
     'email': email,
     'phoneNumber': phoneNumber,
     'firstName': firstName,
     'lastName': lastName,
-    'password': password,
     'birthDay': birthday?.toString() ?? '',
-    'photo': "1",
-  });
-
-  print(MultipartFile.fromFile(_selectedImage!.path));
+    'userId': userid
+  };
 
   try {
-    var response = await dio.post('http://localhost:3099/Register', data: formData);
+    var response = await postEditPofileApi(urlApi, formData);
+    // var response = await dio.post('http://localhost:3099/updateprofile', data: formData);
     
     // Handle the API response
-    if (response.statusCode == 200) {
-      // API call was successful
-      print('API Response: ${response.statusCode} ${response.data}');
+    if (response.token != null) {
+        // Token obtained, store it securely (e.g., using shared_preferences)
+        // You can now navigate to the home screen or perform other actions
+        uploadImage();
+          Navigator.push(
+                  context,
+                  MaterialPageRoute(builder: (context) => LoginPage()),
+                );
+      } else {
+        // No token obtained, handle the error (e.g., show error message)
+      }
+    // if (response.statusCode == 200) {
+    //   // API call was successful
+    //   print('API Response: ${response.} ${response.data}');
 
-      // Navigate back to the login page
-      Navigator.pop(context);
-    } else {
-      // API call was not successful
-      print('API Response: ${response.statusCode} ${response.data}');
+    //   // Navigate back to the login page
+    //   Navigator.pop(context);
+    //   uploadImage();
+    // } else {
+    //   // API call was not successful
+    //   print('API Response: ${response.statusCode} ${response.data}');
       
-      // Handle other responses or show an error message
-      // handleApiError(context, response);
-    }
+    //   // Handle other responses or show an error message
+    //   // handleApiError(context, response);
+    // }
   } catch (error) {
     // Handle errors
     print('Error: $error');
+  }
+}
+
+Future<void> uploadImage() async {
+  Dio dio = Dio();
+  String email = emailController.text;
+  File imageFile = File(_selectedImage!.path);
+
+  try {
+    // String fileName = imageFile.path.split('/').last;
+    FormData formData = FormData.fromMap({
+      'photo': await MultipartFile.fromFile(
+        imageFile.path,
+      ),
+    });
+
+    Response response = await dio.post("http://localhost:3099/upload/${email}", data: formData);
+
+    if (response.statusCode == 200) {
+      print('Image uploaded successfully ${response.data}');
+    } else {
+      print('Error uploading image: ${response.statusMessage}');
+    }
+  } catch (e) {
+    print('Error uploading image: $e');
   }
 }
 

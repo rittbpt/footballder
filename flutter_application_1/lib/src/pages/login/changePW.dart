@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_application_1/src/pages/login/login.dart';
 import 'package:flutter_application_1/src/pages/login/otp.dart';
 import 'package:flutter_application_1/src/pages/login/signup.dart';
 import 'package:flutter_application_1/src/pages/login/otp.dart';
@@ -128,7 +129,10 @@ class ChangePasswordPageState extends State<ChangePasswordPage> {
       print(FormData);
 
       // Navigate back to the login page
-      Navigator.pop(context);
+      Navigator.push(
+          context,
+          MaterialPageRoute(builder: (context) => LoginPage()),
+        );
     } else {
       // API call was not successful
       print('API Response: ${response.statusCode} ${response.data}');

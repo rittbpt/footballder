@@ -3,25 +3,28 @@ import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_application_1/src/pages/api_service.dart';
 import 'package:flutter_application_1/src/pages/checkin.dart';
 
-
 class RequestInfo {
   final String firstName;
   final int age;
   final String position;
+  final String matchName;
   final String photoLink;
   final String stadium;
   final String day;
   final String time;
+  final int rqId;
   // final DateTime day;
 
   RequestInfo({
     required this.firstName,
     required this.age,
     required this.position,
+    required this.matchName,
     required this.photoLink,
     required this.stadium,
     required this.day,
     required this.time,
+    required this.rqId,
   });
 
   factory RequestInfo.fromJson(Map<String, dynamic> json) {
@@ -29,10 +32,39 @@ class RequestInfo {
       firstName: json['firstName'] ?? '',
       age: json['age'] != null ? int.tryParse(json['age'].toString()) ?? 0 : 0,
       position: json['position'] ?? '',
-      photoLink: json['photoLink'] ?? '',
+      photoLink: json['photo'] ?? '',
+      matchName: json['matchName'] ?? '',
       stadium: json['namelocation'] ?? '',
       day: json['day'] ?? '',
       time: json['time'] ?? '',
+      rqId:
+          json['rqId'] != null ? int.tryParse(json['rqId'].toString()) ?? 0 : 0,
+    );
+  }
+}
+
+class MyRequestInfo {
+  final String stadiumName;
+  final String date;
+  final String time;
+  final String photoLink;
+  final String matchName;
+
+  MyRequestInfo({
+    required this.stadiumName,
+    required this.date,
+    required this.time,
+    required this.photoLink,
+    required this.matchName,
+  });
+
+  factory MyRequestInfo.fromJson(Map<String, dynamic> json) {
+    return MyRequestInfo(
+      stadiumName: json['namelocation'] ?? '',
+      date: json['day'] ?? '',
+      time: json['time'] ?? '',
+      photoLink: json['photo'] ?? '',
+      matchName: json['matchName'] ?? '',
     );
   }
 }
@@ -44,7 +76,8 @@ class Request extends StatefulWidget {
 
 class RequestPageState extends State<Request> {
   late Future<List<RequestInfo>> futureRequestList;
-  int userId = globalApiResponse!.userData!['id'];
+  late Future<List<MyRequestInfo>> futureMyRequestList;
+  String userId = globalApiResponse!.userData!['id'];
   List<RequestInfo> stadiumData = [];
   void acceptMatch(int index) {
     setState(() {
@@ -56,6 +89,7 @@ class RequestPageState extends State<Request> {
   void initState() {
     super.initState();
     futureRequestList = fetchData();
+    futureMyRequestList = fetchMyRequestData();
     // fetchData().then((data) {
     //   setState(() {
     //     stadiumList = data;
@@ -66,6 +100,7 @@ class RequestPageState extends State<Request> {
   void refreshData() {
     setState(() {
       futureRequestList = fetchData();
+      futureMyRequestList = fetchMyRequestData();
     });
   }
 
@@ -104,7 +139,7 @@ class RequestPageState extends State<Request> {
         print("responseData");
 
         if (responseData.containsKey('data')) {
-          List<dynamic> requestJsonList = responseData['data'];
+          List<dynamic> requestJsonList = responseData['data']['request'];
 
           // Create StadiumInfo objects from the fetched data
           RequestList = requestJsonList
@@ -123,6 +158,74 @@ class RequestPageState extends State<Request> {
 
     return RequestList;
   }
+
+  Future<List<MyRequestInfo>> fetchMyRequestData() async {
+    List<MyRequestInfo> MyRequestList = [];
+
+    try {
+      final response =
+          await getApi('http://localhost:3099/getrequestbyId/${userId}');
+
+      if (response.statusCode == 200) {
+        // Parse the response data
+        Map<String, dynamic> responseData = response.data;
+        print(responseData);
+        print("responseData");
+
+        if (responseData.containsKey('data')) {
+          List<dynamic> requestJsonList = responseData['data']['myrequest'];
+
+          // Create StadiumInfo objects from the fetched data
+          MyRequestList = requestJsonList
+              .map((json) => MyRequestInfo.fromJson(json))
+              .toList();
+        } else {
+          throw Exception('Data format is incorrect');
+        }
+      } else {
+        throw Exception('Failed to fetch data');
+      }
+    } catch (error) {
+      print('Error: $error');
+    }
+    print(MyRequestList);
+
+    return MyRequestList;
+  }
+
+  // Future<List<MyRequestInfo>> fetchMyRequestData() async {
+  //   List<MyRequestInfo> MyRequestList = [];
+
+  //   try {
+  //     final response =
+  //         await getApi('http://localhost:3099/getrequestbyId/${userId}');
+
+  //     if (response.statusCode == 200) {
+  //       // Parse the response data
+  //       Map<String, dynamic> responseData = response.data;
+  //       print(responseData);
+  //       print("responseData");
+
+  //       if (responseData.containsKey('data')) {
+  //         List<dynamic> requestJsonList = responseData['data']['request'];
+
+  //         // Create StadiumInfo objects from the fetched data
+  //         MyRequestList = requestJsonList
+  //             .map((json) => MyRequestInfo.fromJson(json))
+  //             .toList();
+  //       } else {
+  //         throw Exception('Data format is incorrect');
+  //       }
+  //     } else {
+  //       throw Exception('Failed to fetch data');
+  //     }
+  //   } catch (error) {
+  //     print('Error: $error');
+  //   }
+  //   print(MyRequestList);
+
+  //   return MyRequestList;
+  // }
 
   @override
   Widget build(BuildContext context) {
@@ -147,7 +250,7 @@ class RequestPageState extends State<Request> {
               children: [
                 SizedBox(height: 30),
                 Text(
-                  'Request to join',
+                  'Other request to join',
                   style: TextStyle(
                     color: Color(0xFF146001),
                     fontSize: 24,
@@ -183,7 +286,51 @@ class RequestPageState extends State<Request> {
                         itemCount: stadiumList.length,
                         itemBuilder: (context, index) {
                           RequestInfo stadium = stadiumList[index];
-                          return _buildMatchBox(stadium, acceptMatch, index);
+                          return _buildRequestBox(stadium, acceptMatch, index);
+                        },
+                      );
+                    }
+                  },
+                ),
+                SizedBox(height: 30),
+                Text(
+                  'Your request',
+                  style: TextStyle(
+                    color: Color(0xFF146001),
+                    fontSize: 24,
+                    fontFamily: 'DM Sans',
+                    fontWeight: FontWeight.bold,
+                    height: 0.06,
+                  ),
+                ),
+                SizedBox(height: 30),
+                FutureBuilder<List<MyRequestInfo>>(
+                  future: futureMyRequestList,
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // Display a loading indicator while waiting for data
+                      return Container(
+                        alignment: Alignment
+                            .center, // Center the CircularProgressIndicator
+                        margin:
+                            EdgeInsets.only(top: 20), // Add margin from the top
+                        child: CircularProgressIndicator(
+                          color: Color(0xFF146001),
+                        ),
+                      );
+                    } else if (snapshot.hasError) {
+                      // Handle error state
+                      return Text('Error fetching data');
+                    } else {
+                      // Data has been successfully fetched, display it
+                      List<MyRequestInfo> stadiumList = snapshot.data!;
+                      return ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: stadiumList.length,
+                        itemBuilder: (context, index) {
+                          MyRequestInfo stadium = stadiumList[index];
+                          return _buildMyRequestBox(stadium);
                         },
                       );
                     }
@@ -199,7 +346,7 @@ class RequestPageState extends State<Request> {
   }
 
   // Helper method to build each match box
-  Widget _buildMatchBox(
+  Widget _buildRequestBox(
       RequestInfo request, Function(int) onAccept, int index) {
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10),
@@ -233,7 +380,7 @@ class RequestPageState extends State<Request> {
             decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(50),
               image: DecorationImage(
-                image: AssetImage(request.photoLink),
+                image: NetworkImage(request.photoLink),
                 fit: BoxFit.cover,
               ),
             ),
@@ -246,6 +393,7 @@ class RequestPageState extends State<Request> {
               Row(
                 children: [
                   // SizedBox(height: 20),
+                  SizedBox(width: 10),
                   Text(
                     '${request.firstName}',
                     style: TextStyle(
@@ -271,15 +419,46 @@ class RequestPageState extends State<Request> {
                   ),
                 ],
               ),
-              // SizedBox(height: 5),
-              Text(
-                '${request.stadium}',
-                style: TextStyle(
-                  fontSize: 12,
-                  // color: const Color.fromARGB(255, 0, 0, 0),
-                ),
+              // Row(
+              //   children: [
+              //     SizedBox(width: 10),
+              // Text(
+              //       '${request.matchName}',
+              //       style: TextStyle(
+              //         fontSize: 16,
+              //         fontWeight: FontWeight.bold,
+              //         // color: const Color.fromARGB(255, 0, 0, 0),
+              //       ),
+              //     ),
+              //   ],
+              // ),
+              Row(
+                children: [
+                  SizedBox(width: 10),
+                  Icon(
+                    Icons.stadium_outlined,
+                    size: 16,
+                    color: Colors.black,
+                  ),
+                  SizedBox(width: 5),
+                  // SizedBox(height: 5),
+                  Text(
+                    '${request.stadium}',
+                    style: TextStyle(
+                      fontSize: 12,
+                      // color: const Color.fromARGB(255, 0, 0, 0),
+                    ),
+                  ),
+                ],
               ),
               Row(children: [
+                SizedBox(width: 10),
+                Icon(
+                    Icons.calendar_month,
+                    size: 16,
+                    color: const Color.fromARGB(255, 63, 44, 44),
+                  ),
+                  SizedBox(width: 5),
                 Text(
                   '${request.day}',
                   style: TextStyle(
@@ -306,8 +485,8 @@ class RequestPageState extends State<Request> {
                     height: 30, // Adjusted height for a smaller button
                     child: ElevatedButton(
                       onPressed: () {
-                        accept();
-                        refreshData();
+                        accept(request.rqId);
+                        // refreshData();
                         // Handle button click
                       },
                       style: ElevatedButton.styleFrom(
@@ -337,8 +516,8 @@ class RequestPageState extends State<Request> {
                     height: 30, // Adjusted height for a smaller button
                     child: ElevatedButton(
                       onPressed: () {
-                        decline();
-                        refreshData();
+                        decline(request.rqId);
+                        // refreshData();
                         // Handle button click
                       },
                       style: ElevatedButton.styleFrom(
@@ -372,15 +551,129 @@ class RequestPageState extends State<Request> {
     );
   }
 
-  void accept() async {
-    int requestID = 1;
+  Widget _buildMyRequestBox(MyRequestInfo match) {
+    return Container(
+      margin: EdgeInsets.symmetric(vertical: 10),
+      padding: EdgeInsets.all(10),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.grey.withOpacity(0.5),
+            spreadRadius: 2,
+            blurRadius: 5,
+            offset: Offset(0, 3),
+          ),
+        ],
+        gradient: LinearGradient(
+          colors: [
+            Color(0xFFDFE2DB),
+            const Color.fromARGB(255, 255, 255, 255)
+          ], // Change colors as needed
+          begin: Alignment.topCenter,
+          end: Alignment.bottomCenter,
+        ),
+      ),
+      child: Row(
+        children: [
+          // Left side with square photo
+          Container(
+            width: 100,
+            height: 100,
+            decoration: BoxDecoration(
+              borderRadius: BorderRadius.circular(10),
+              image: DecorationImage(
+                image: NetworkImage(match.photoLink),
+                fit: BoxFit.cover,
+              ),
+            ),
+          ),
+          SizedBox(width: 10),
+          // Center column with text and time
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // SizedBox(height: 20),
+              Row(
+                children: [
+                  Text(
+                    match.matchName,
+                    style: TextStyle(
+                      fontSize: 20,
+                      fontWeight: FontWeight.bold,
+                      // color: Color(0xFF146001),
+                    ),
+                    overflow: TextOverflow.clip, // Clip overflowing text
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.stadium_outlined,
+                    size: 16,
+                    color: Colors.black,
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    match.stadiumName,
+                    style: TextStyle(
+                      fontSize: 16,
+                      // fontWeight: FontWeight.bold,
+                    ),
+                    overflow: TextOverflow.clip, // Clip overflowing text
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.calendar_month,
+                    size: 16,
+                    color: const Color.fromARGB(255, 63, 44, 44),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    match.date,
+                    style: TextStyle(
+                      fontSize: 16,
+                      // color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                children: [
+                  Icon(
+                    Icons.access_time,
+                    size: 16,
+                    color: const Color.fromARGB(255, 63, 44, 44),
+                  ),
+                  SizedBox(width: 5),
+                  Text(
+                    '16:00',
+                    style: TextStyle(
+                      fontSize: 16,
+                      // color: Colors.grey,
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 10),
+              // Row for multiple buttons
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  void accept(int rqId) async {
     bool status = true;
     String apiUrl = 'http://localhost:3099/updateRqstatus';
 
-    Map<String, dynamic> requestBody = {
-      'requestID': requestID,
-      'status': status
-    };
+    Map<String, dynamic> requestBody = {'requestID': rqId, 'status': status};
 
     try {
       var response = await postApi(apiUrl, requestBody);
@@ -389,9 +682,10 @@ class RequestPageState extends State<Request> {
       if (response.statusCode == 200) {
         // API call was successful
         print('API Response: ${response.statusCode} ${response.data}');
+        refreshData();
 
         // Navigate back to the login page
-        Navigator.pop(context);
+        // Navigator.pop(context);
       } else {
         // API call was not successful
         print('API Response: ${response.statusCode} ${response.data}');
@@ -405,15 +699,11 @@ class RequestPageState extends State<Request> {
     }
   }
 
-  void decline() async {
-    int requestID = 1;
+  void decline(int rqId) async {
     bool status = false;
     String apiUrl = 'http://localhost:3099/updateRqstatus';
 
-    Map<String, dynamic> requestBody = {
-      'requestID': requestID,
-      'status': status
-    };
+    Map<String, dynamic> requestBody = {'requestID': rqId, 'status': status};
 
     try {
       var response = await postApi(apiUrl, requestBody);
@@ -422,6 +712,7 @@ class RequestPageState extends State<Request> {
       if (response.statusCode == 200) {
         // API call was successful
         print('API Response: ${response.statusCode} ${response.data}');
+        refreshData();
 
         // Navigate back to the login page
         Navigator.pop(context);
